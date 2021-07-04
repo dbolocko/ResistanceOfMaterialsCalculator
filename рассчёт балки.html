@@ -1,0 +1,135 @@
+<html>
+<head>
+  <HTA:APPLICATION ID="oHTA"
+    APPLICATIONNAME="WMPTour"
+    BORDER="thin"
+    BORDERSTYLE="normal"
+    maximizeButton="no"
+    minimizeButton="no"
+    ICON="img/wmptour.ico"
+    SINGLEINSTANCE="yes"
+    SYSMENU="yes"
+    VERSION="1.0"/>
+  <title>Расчёт балки</title>
+  <script>
+      var fx =[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+      var forcesm = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+	  var n_values = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+	  var shape = 0;
+	  var material = 0;
+	  var lb = 0;
+      var x = 0;
+	  
+	  function swap(arr, a, b) { //it need 4 sort
+        let temp = arr[a];
+        arr[a] = arr[b];
+        arr[b] = temp;
+      }
+	  
+	  const Compare = {  // it's too
+      LESS_THAN: -1,
+      BIGGER_THAN: 1
+      };
+	  
+      function defaultCompare(a, b) //and it
+	  {
+        if (a === b) {
+          return 0;
+        }
+        return a < b ? Compare.LESS_THAN : Compare.BIGGER_THAN;
+      }
+	  
+      function input_forces()  // actually, not only forces...
+	  {
+	    lb = parseInt(prompt("Длина балки", "5"));
+        x = parseInt(prompt("Количество сил", "1"));
+        for (var i = 0; i < x; i++) {
+          fx[i] = parseInt(prompt("Расстояние от заделки до точки приложения силы("+(i+1)+")", "5"));
+          if (fx[i]>lb)
+          {
+            alert("");
+            break;
+          }
+          forcesm[i] = parseInt(prompt("величина силы", "5"));
+        }
+	  }
+	  
+	  function sort_forces(arr, len, compare = defaultCompare) //shitcode
+	  {  
+        for (let i = 0; i < len; i++) {
+          for (let j = 0; j < len - 1 - i; j++) { // brilliantly
+              if (compare(arr[j], arr[j + 1]) === Compare.BIGGER_THAN) {
+                  swap(arr, j, j + 1);
+				  swap(forcesm, j, j + 1);
+                }
+            }
+        }
+        return arr;
+      }
+	  
+	  function fuckin_sum(stop_c)  //it's not so simple..
+	  {
+	    for(var i = 0; i < stop_c; i++){ }
+	  }
+	  
+	  function calc_n() // calc niggas bahahahah
+	  {
+	    for(var i=0; i < x; i++)
+		{
+		  n_values[i] = fuckin_sum(i,fx, forcesm); //i am king if naming
+		}
+	  }
+	  
+	  function calc_diam(){}
+	  function calc_sigma(){}
+	  function calc_dl(){}
+	  function calc_delta(){}
+	  
+      function alerted()  //it all begins here
+	  {
+        input_forces();
+		fx=sort_forces(fx, x);
+		calc_n();
+		calc_diam();
+		calc_sigma();
+		calc_dl();
+		calc_delta();
+      }
+        
+  </script>
+</head>
+
+<body>
+  <h1>Расчёт на прочность и жёсткость при растяжении и сжатии</h1>
+
+  <table border="2" style="border-collapse:collapse;">
+    <tr>
+      <th width=300>Эпюры</th>
+      <th width=500>Данные</th>
+    </tr> <!-- заголовки чисто чтобы начать работать -->
+
+    <tr>
+      <td>
+      <center>
+        <canvas height='500' width='280' id='example'>я... хуй знает что ты утворил, чтобы увидеть этот текст, но, пожалуйста, верни всё как было. а то эпюр не будет. тебе ведь нужны эпюры?</canvas>
+      </center>    
+      <script>
+        var example = document.getElementById("example"),
+        ctx = example.getContext('2d');
+        ctx.shadowOffsetX = 5;
+        ctx.shadowOffsetY = 5;
+        ctx.shadowBlur = 5;
+        ctx.fillStyle = "#00F";
+        ctx.strokeStyle = "#F00";
+        ctx.font = 'bold 30px sans-serif';
+        ctx.strokeText("Тут будут эпюры", 20, 50);
+        ctx.font = "italic 10pt Arial";
+        ctx.fillText("но сначала необходимо ввести данные", 20, 100);
+      </script>
+    </td>
+    <td><button type="submit" id="submit" onclick="alerted();">начать рассчёты</button></td>
+    </tr> 
+  </table>
+</body>
+
+</html>
