@@ -21,7 +21,7 @@ var sigma_vr=[380,
    100,
    260,
    900];
- var sigma_t = [240,
+var sigma_t = [240,
    0,
    700,
    110,
@@ -34,3 +34,13 @@ var sigma_vr=[380,
    0];
 var sigma_r = [160,40,350,55,115,105,90,35,8,130,400];
 var sigma_s = [160,40,350,55,115,105,90,35,12,130,400];
+function s(ts,v1,v2)
+{
+	if(ts == 1)
+		return v1*v1
+	if(ts == 2)
+		return v1*v2
+	if(ts == 3)
+		return 3.14*v1
+	
+}
