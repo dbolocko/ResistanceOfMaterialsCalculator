@@ -13,16 +13,16 @@
   <title>Расчёт балки</title>
   <script src="propertiesofmaterials.js"></script>
   <script>
-      var fx =[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+      var fx =[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]; // я не знал как сделать массив по-нормальному. не знаю до сих пор.
       var forcesm = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 	  var n_values = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-	  var shape = 0;
+	  var shape = 3; // форма сечения
 	  var material = 0;
-	  var lb = 0;
-      var x = 0;
+	  var lb = 0; // длина балки
+      var x = 0;  // count of forces
 	  
 	  function swap(arr, a, b) { //it need 4 sort
-        let temp = arr[a];
+        var temp = arr[a];
         arr[a] = arr[b];
         arr[b] = temp;
       }
@@ -68,9 +68,14 @@
         return arr;
       }
 	  
-	  function fuckin_sum(stop_c)  //it's not so simple..
+	  function fuckin_sum(stop_c, arr1, arr2)  //it's not so simple..
 	  {
-	    for(var i = 0; i < stop_c; i++){ }
+	    var temp_result = 0;
+	    for(var i = 0; i < stop_c; i++)
+		{ 
+		  temp_result = temp_result+arr2[x-i];
+		}
+		return temp_result;
 	  }
 	  
 	  function calc_n() // calc niggas bahahahah
@@ -88,10 +93,13 @@
 	  
       function alerted()  //it all begins here
 	  {
-        input_forces();
-		fx=sort_forces(fx, x);
-		calc_n();
-		calc_diam();
+        input_forces(); // input forces
+		fx=sort_forces(fx, x); //sorting forces 4 more easier calculating "N"
+		console.log("fx="+fx);
+		alert(forcesm);
+		calc_n();  //
+		alert(n_values);
+		calc_diam();  //
 		calc_sigma();
 		calc_dl();
 		calc_delta();
@@ -109,26 +117,30 @@
       <th width=500>Данные</th>
     </tr> <!-- заголовки чисто чтобы начать работать -->
 
-    <tr>
+    <tr> <!-- самое интересное -->
       <td>
       <center>
-        <canvas height='500' width='280' id='example'>я... хуй знает что ты утворил, чтобы увидеть этот текст, но, пожалуйста, верни всё как было. а то эпюр не будет. тебе ведь нужны эпюры?</canvas>
-      </center>    
-      <script>
-        var example = document.getElementById("example"),
-        ctx = example.getContext('2d');
+        <canvas height='500' width='280' id='example'>я... х№й знает что ты утворил, чтобы увидеть этот текст, но, пожалуйста, верни всё как было. а то эпюр не будет. тебе ведь нужны эпюры?</canvas>
+        <!-- вот реально -->
+	  </center>    
+      <script  async> 
+        var example = document.getElementById("example");
+        var ctx = example.getContext('2d');
         ctx.shadowOffsetX = 5;
         ctx.shadowOffsetY = 5;
-        ctx.shadowBlur = 5;
+        ctx.shadowBlur = 5; // это почему-то не работает
         ctx.fillStyle = "#00F";
         ctx.strokeStyle = "#F00";
         ctx.font = 'bold 30px sans-serif';
         ctx.strokeText("Тут будут эпюры", 20, 50);
         ctx.font = "italic 10pt Arial";
         ctx.fillText("но сначала необходимо ввести данные", 20, 100);
+		// красота, не правда ли?
+		alert("пока по дефолту всё рассчитывается для круглого сечения");
+		// это важно
       </script>
     </td>
-    <td><button type="submit" id="submit" onclick="alerted();">начать рассчёты</button></td>
+    <td><button type="submit" onclick="alerted();">начать рассчёты</button></td>
     </tr> 
   </table>
 </body>
