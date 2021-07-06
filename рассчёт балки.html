@@ -68,21 +68,18 @@
         return arr;
       }
 	  
-	  function fuckin_sum(stop_c, arr1, arr2)  //it's not so simple..
+	  function fuckin_sum(i, arr, n)  //it's not so simple.. 6.7.2021 upd blyat' it's easy
 	  {
-	    var temp_result = 0;
-	    for(var i = 0; i < stop_c; i++)
-		{ 
-		  temp_result = temp_result+arr2[x-i];
-		}
-		return temp_result;
+	    return n+arr[x-i-1];
 	  }
 	  
 	  function calc_n() // calc niggas bahahahah
 	  {
-	    for(var i=0; i < x; i++)
+	    n_values[0] = fuckin_sum(0, forcesm, 0); 
+	    for(var i=1; i < x; i++)
 		{
-		  n_values[i] = fuckin_sum(i,fx, forcesm); //i am king if naming
+		  n_values[i] = fuckin_sum(i, forcesm, n_values[i-1]); 
+		  console.log("N(" + i + ")="+n_values[i]);
 		}
 	  }
 	  
@@ -96,9 +93,9 @@
         input_forces(); // input forces
 		fx=sort_forces(fx, x); //sorting forces 4 more easier calculating "N"
 		console.log("fx="+fx);
-		alert(forcesm);
+		console.log(forcesm);
 		calc_n();  //
-		alert(n_values);
+		console.log(n_values);
 		calc_diam();  //
 		calc_sigma();
 		calc_dl();
