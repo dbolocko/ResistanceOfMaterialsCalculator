@@ -1,153 +1,153 @@
 <html>
 <head>
-  <HTA:APPLICATION ID="oHTA"
-    APPLICATIONNAME="WMPTour"
-    BORDER="thin"
-    BORDERSTYLE="normal"
-    maximizeButton="no"
-    minimizeButton="no"
-    ICON="img/wmptour.ico"
-    SINGLEINSTANCE="yes"
-    SYSMENU="yes"
-    VERSION="1.0"/>
-  <title>Расчёт балки</title>
-  <script src="propertiesofmaterials.js"></script>
-  <script>
-      var fx =[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]; // я не знал как сделать массив по-нормальному. не знаю до сих пор.
-      var forcesm = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0];
-	  var n_values = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0];
-	  var d_values = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0];
-	  var shape = 3; // форма сечения
-	  var material = 0;
-	  var lb = 0; // длина балки
-      var x = 0;  // count of forces
-	  
-	  function swap(arr, a, b) { //it need 4 sort
-        var temp = arr[a];
-        arr[a] = arr[b];
-        arr[b] = temp;
-      }
-	  
-	  const Compare = {  // it's too
-      LESS_THAN: -1,
-      BIGGER_THAN: 1
-      };
-	  
-      function defaultCompare(a, b) //and it
-	  {
-        if (a === b) {
-          return 0;
-        }
-        return a < b ? Compare.LESS_THAN : Compare.BIGGER_THAN;
-      }
-	  
-      function input_forces()  // actually, not only forces...
-	  {
-	    lb = parseInt(prompt("Длина балки", "5"));
-        x = parseInt(prompt("Количество сил", "1"));
-		shape = parseInt(prompt("форма сечения: 1-квадратное, 3-круглое", "1"));
-        for (var i = 0; i < x; i++) {
-          fx[i] = parseInt(prompt("Расстояние от заделки до точки приложения силы("+(i+1)+")", "5"));
-          if (fx[i]>lb)
-          {
-            alert("");
-            break;
-          }
-          forcesm[i] = parseInt(prompt("величина силы", "5"));
-        }
-	  }
-	  
-	  function sort_forces(arr, len, compare = defaultCompare) //shitcode
-	  {  
-        for (let i = 0; i < len; i++) {
-          for (let j = 0; j < len - 1 - i; j++) { // brilliantly
-              if (compare(arr[j], arr[j + 1]) === Compare.BIGGER_THAN) {
-                  swap(arr, j, j + 1);
-				  swap(forcesm, j, j + 1);
-                }
-            }
-        }
-        return arr;
-      }
-	  
-	  function fuckin_sum(i, arr, n)  //it's not so simple.. 6.7.2021 upd blyat' it's easy
-	  {
-	    return n+arr[x-i-1];
-	  }
-	  
-	  function calc_n() // calc niggas bahahahah
-	  {
-	    for(var j=x; j!=-1; j--)
-		{
-		  n_values[j] = n_values[j+1]+forcesm[j];
-		}
-	  }
-	  
-	  function calc_diam()
-	  {
-	    
-	  }
-	  
-	  function calc_sigma(){}
-	  function calc_dl(){}
-	  function calc_delta(){}
-	  function draw_diam(){}
-	  function draw_sigma(){}
-	  function draw_dl(){}
-	  function draw_delta(){}
-	  
-	  
-      function alerted()  //it all begins here
-	  {
-        input_forces(); // input forces
-		fx=sort_forces(fx, x); //sorting forces 4 more easier calculating "N"
-		calc_n();  //
-		console.log(n_values);
-		console.log(forcesm);
-		calc_diam();  //
-		calc_sigma();
-		calc_dl();
-		calc_delta();
-      }
-        
-  </script>
+<HTA:APPLICATION ID="oHTA"
+APPLICATIONNAME="WMPTour"
+BORDER="thin"
+BORDERSTYLE="normal"
+maximizeButton="no"
+minimizeButton="no"
+ICON="img/wmptour.ico"
+SINGLEINSTANCE="yes"
+SYSMENU="yes"
+VERSION="1.0"/>
+<title>Р Р°СЃС‡С‘С‚ Р±Р°Р»РєРё</title>
+<script src="propertiesofmaterials.js"></script>
+<script>
+var fx =[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]; // СЏ РЅРµ Р·РЅР°Р» РєР°Рє СЃРґРµР»Р°С‚СЊ РјР°СЃСЃРёРІ РїРѕ-РЅРѕСЂРјР°Р»СЊРЅРѕРјСѓ. РЅРµ Р·РЅР°СЋ РґРѕ СЃРёС… РїРѕСЂ.
+var forcesm = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0];
+var n_values = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0];
+var d_values = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0];
+var shape = 3; // С„РѕСЂРјР° СЃРµС‡РµРЅРёСЏ
+var material = 0;
+var lb = 0; // РґР»РёРЅР° Р±Р°Р»РєРё
+var x = 0; // count of forces
+
+function swap(arr, a, b) { //it need 4 sort
+var temp = arr[a];
+arr[a] = arr[b];
+arr[b] = temp;
+}
+
+const Compare = { // it's too
+LESS_THAN: -1,
+BIGGER_THAN: 1
+};
+
+function defaultCompare(a, b) //and it
+{
+if (a === b) {
+return 0;
+}
+return a < b ? Compare.LESS_THAN : Compare.BIGGER_THAN;
+}
+
+function input_forces() // actually, not only forces...
+{
+lb = parseInt(prompt("Р”Р»РёРЅР° Р±Р°Р»РєРё", "5"));
+x = parseInt(prompt("РљРѕР»РёС‡РµСЃС‚РІРѕ СЃРёР»", "1"));
+shape = parseInt(prompt("С„РѕСЂРјР° СЃРµС‡РµРЅРёСЏ: 1-РєРІР°РґСЂР°С‚РЅРѕРµ, 3-РєСЂСѓРіР»РѕРµ", "1"));
+for (var i = 0; i < x; i++) {
+fx[i] = parseInt(prompt("Р Р°СЃСЃС‚РѕСЏРЅРёРµ РѕС‚ Р·Р°РґРµР»РєРё РґРѕ С‚РѕС‡РєРё РїСЂРёР»РѕР¶РµРЅРёСЏ СЃРёР»С‹("+(i+1)+")", "5"));
+if (fx[i]>lb)
+{
+alert("");
+break;
+}
+forcesm[i] = parseInt(prompt("РІРµР»РёС‡РёРЅР° СЃРёР»С‹", "5"));
+}
+}
+
+function sort_forces(arr, len, compare = defaultCompare) //shitcode
+{
+for (let i = 0; i < len; i++) {
+for (let j = 0; j < len - 1 - i; j++) { // brilliantly
+if (compare(arr[j], arr[j + 1]) === Compare.BIGGER_THAN) {
+swap(arr, j, j + 1);
+swap(forcesm, j, j + 1);
+}
+}
+}
+return arr;
+}
+
+function fuckin_sum(i, arr, n) //it's not so simple.. 6.7.2021 upd blyat' it's easy
+{
+return n+arr[x-i-1];
+}
+
+function calc_n() // calc niggas bahahahah
+{
+for(var j=x; j!=-1; j--)
+{
+n_values[j] = n_values[j+1]+forcesm[j];
+}
+}
+
+function calc_diam()
+{
+
+}
+
+function calc_sigma(){}
+function calc_dl(){}
+function calc_delta(){}
+function draw_diam(){}
+function draw_sigma(){}
+function draw_dl(){}
+function draw_delta(){}
+
+
+function alerted() //it all begins here
+{
+input_forces(); // input forces
+fx=sort_forces(fx, x); //sorting forces 4 more easier calculating "N"
+calc_n(); //
+console.log(n_values);
+console.log(forcesm);
+calc_diam(); //
+calc_sigma();
+calc_dl();
+calc_delta();
+}
+
+</script>
 </head>
 
 <body>
-  <h1>Расчёт на прочность и жёсткость при растяжении и сжатии</h1>
-  <h2> ВНИМАНИЕ! для того, чтобы пересчитать результаты
-  <table border="2" style="border-collapse:collapse;">
-    <tr>
-      <th width=300>Эпюры</th>
-      <th width=500>Данные</th>
-    </tr> <!-- заголовки чисто чтобы начать работать -->
+<h1>Р Р°СЃС‡С‘С‚ РЅР° РїСЂРѕС‡РЅРѕСЃС‚СЊ Рё Р¶С‘СЃС‚РєРѕСЃС‚СЊ РїСЂРё СЂР°СЃС‚СЏР¶РµРЅРёРё Рё СЃР¶Р°С‚РёРё</h1>
+<h2> Р’РќРРњРђРќРР•! РґР»СЏ С‚РѕРіРѕ, С‡С‚РѕР±С‹ РїРµСЂРµСЃС‡РёС‚Р°С‚СЊ СЂРµР·СѓР»СЊС‚Р°С‚С‹
+<table border="2" style="border-collapse:collapse;">
+<tr>
+<th width=300>Р­РїСЋСЂС‹</th>
+<th width=500>Р”Р°РЅРЅС‹Рµ</th>
+</tr> <!вЂ” Р·Р°РіРѕР»РѕРІРєРё С‡РёСЃС‚Рѕ С‡С‚РѕР±С‹ РЅР°С‡Р°С‚СЊ СЂР°Р±РѕС‚Р°С‚СЊ вЂ”>
 
-    <tr> <!-- самое интересное -->
-      <td>
-      <center>
-        <canvas height='500' width='280' id='example'>я... х№й знает что ты утворил, чтобы увидеть этот текст, но, пожалуйста, верни всё как было. а то эпюр не будет. тебе ведь нужны эпюры?</canvas>
-        <!-- вот реально -->
-	  </center>    
-      <script  async> 
-        var example = document.getElementById("example");
-        var ctx = example.getContext('2d');
-        ctx.shadowOffsetX = 5;
-        ctx.shadowOffsetY = 5;
-        ctx.shadowBlur = 5; // это почему-то не работает
-        ctx.fillStyle = "#00F";
-        ctx.strokeStyle = "#F00";
-        ctx.font = 'bold 30px sans-serif';
-        ctx.strokeText("Тут будут эпюры", 20, 50);
-        ctx.font = "italic 10pt Arial";
-        ctx.fillText("но сначала необходимо ввести данные", 20, 100);
-		// красота, не правда ли?
-		alert("пока по дефолту всё рассчитывается для круглого сечения");
-		// это важно
-      </script>
-    </td>
-    <td><button type="submit" onclick="alerted();">начать рассчёты</button></td>
-    </tr> 
-  </table>
+<tr> <!вЂ” СЃР°РјРѕРµ РёРЅС‚РµСЂРµСЃРЅРѕРµ вЂ”>
+<td>
+<center>
+<canvas height='500' width='280' id='example'>СЏ... С…в„–Р№ Р·РЅР°РµС‚ С‡С‚Рѕ С‚С‹ СѓС‚РІРѕСЂРёР», С‡С‚РѕР±С‹ СѓРІРёРґРµС‚СЊ СЌС‚РѕС‚ С‚РµРєСЃС‚, РЅРѕ, РїРѕР¶Р°Р»СѓР№СЃС‚Р°, РІРµСЂРЅРё РІСЃС‘ РєР°Рє Р±С‹Р»Рѕ. Р° С‚Рѕ СЌРїСЋСЂ РЅРµ Р±СѓРґРµС‚. С‚РµР±Рµ РІРµРґСЊ РЅСѓР¶РЅС‹ СЌРїСЋСЂС‹?</canvas>
+<!вЂ” РІРѕС‚ СЂРµР°Р»СЊРЅРѕ вЂ”>
+</center>
+<script async>
+var example = document.getElementById("example");
+var ctx = example.getContext('2d');
+ctx.shadowOffsetX = 5;
+ctx.shadowOffsetY = 5;
+ctx.shadowBlur = 5; // СЌС‚Рѕ РїРѕС‡РµРјСѓ-С‚Рѕ РЅРµ СЂР°Р±РѕС‚Р°РµС‚
+ctx.fillStyle = "#00F";
+ctx.strokeStyle = "#F00";
+ctx.font = 'bold 30px sans-serif';
+ctx.strokeText("РўСѓС‚ Р±СѓРґСѓС‚ СЌРїСЋСЂС‹", 20, 50);
+ctx.font = "italic 10pt Arial";
+ctx.fillText("РЅРѕ СЃРЅР°С‡Р°Р»Р° РЅРµРѕР±С…РѕРґРёРјРѕ РІРІРµСЃС‚Рё РґР°РЅРЅС‹Рµ", 20, 100);
+// РєСЂР°СЃРѕС‚Р°, РЅРµ РїСЂР°РІРґР° Р»Рё?
+alert("РїРѕРєР° РїРѕ РґРµС„РѕР»С‚Сѓ РІСЃС‘ СЂР°СЃСЃС‡РёС‚С‹РІР°РµС‚СЃСЏ РґР»СЏ РєСЂСѓРіР»РѕРіРѕ СЃРµС‡РµРЅРёСЏ");
+// СЌС‚Рѕ РІР°Р¶РЅРѕ
+</script>
+</td>
+<td><button type="submit" onclick="alerted();">РЅР°С‡Р°С‚СЊ СЂР°СЃСЃС‡С‘С‚С‹</button></td>
+</tr>
+</table>
 </body>
 
 </html>
