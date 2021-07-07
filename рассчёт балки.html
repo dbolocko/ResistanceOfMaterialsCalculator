@@ -13,9 +13,10 @@
   <title>Расчёт балки</title>
   <script src="propertiesofmaterials.js"></script>
   <script>
-      var fx =[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]; // я не знал как сделать массив по-нормальному. не знаю до сих пор.
-      var forcesm = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-	  var n_values = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+      var fx =[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]; // я не знал как сделать массив по-нормальному. не знаю до сих пор.
+      var forcesm = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0];
+	  var n_values = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0];
+	  var d_values = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0];
 	  var shape = 3; // форма сечения
 	  var material = 0;
 	  var lb = 0; // длина балки
@@ -44,6 +45,7 @@
 	  {
 	    lb = parseInt(prompt("Длина балки", "5"));
         x = parseInt(prompt("Количество сил", "1"));
+		shape = parseInt(prompt("форма сечения: 1-квадратное, 3-круглое", "1"));
         for (var i = 0; i < x; i++) {
           fx[i] = parseInt(prompt("Расстояние от заделки до точки приложения силы("+(i+1)+")", "5"));
           if (fx[i]>lb)
@@ -75,27 +77,33 @@
 	  
 	  function calc_n() // calc niggas bahahahah
 	  {
-	    n_values[0] = fuckin_sum(0, forcesm, 0); 
-	    for(var i=1; i < x; i++)
+	    for(var j=x; j!=-1; j--)
 		{
-		  n_values[i] = fuckin_sum(i, forcesm, n_values[i-1]); 
-		  console.log("N(" + i + ")="+n_values[i]);
+		  n_values[j] = n_values[j+1]+forcesm[j];
 		}
 	  }
 	  
-	  function calc_diam(){}
+	  function calc_diam()
+	  {
+	    
+	  }
+	  
 	  function calc_sigma(){}
 	  function calc_dl(){}
 	  function calc_delta(){}
+	  function draw_diam(){}
+	  function draw_sigma(){}
+	  function draw_dl(){}
+	  function draw_delta(){}
+	  
 	  
       function alerted()  //it all begins here
 	  {
         input_forces(); // input forces
 		fx=sort_forces(fx, x); //sorting forces 4 more easier calculating "N"
-		console.log("fx="+fx);
-		console.log(forcesm);
 		calc_n();  //
 		console.log(n_values);
+		console.log(forcesm);
 		calc_diam();  //
 		calc_sigma();
 		calc_dl();
@@ -107,7 +115,7 @@
 
 <body>
   <h1>Расчёт на прочность и жёсткость при растяжении и сжатии</h1>
-
+  <h2> ВНИМАНИЕ! для того, чтобы пересчитать результаты
   <table border="2" style="border-collapse:collapse;">
     <tr>
       <th width=300>Эпюры</th>
