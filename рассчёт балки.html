@@ -22,6 +22,7 @@ var material = 0;
 var lb = 0.0; // длина балки
 var x = 0; // count of forces
 var materials_names_select_text = "";
+var p1_text_results = "";
 
 function swap(arr, a, b) { //it need 4 sort
 var temp = arr[a];
@@ -74,20 +75,28 @@ return arr;
 
 function calc_n() // calc niggas bahahahah
 {
-for(var j=x; j!=-1; j--)
-{
-n_values[j] = n_values[j+1]+forcesm[j];
-}
+  p1_text_results = "1. Определение продольных сил на участках стержня<br>"
+  for(var j=x-1; j!=-1; j--)
+  {
+    n_values[j] = n_values[j+1]+forcesm[j];
+    p1_text_results += "N["+(x-j)+"] ="+ n_values[j]+"<br>"
+  }
 }
 
 function calc_diam()
 {
+  p1_text_results += "<br> 2. Подбор сечения бруса  равного сопротивления<br>";
   for(var i=0; i<x; i++){
     if(n_values[i]<0)
 	{
-	  if(shape == 1) d_values[i]=Math.sqrt();
+	  if(shape == 1) d_values[i]=Math.sqrt(Math.abs(n_values[i]*10^3)/sigma_s[material]);
+	  if(shape == 3) d_values[i]=Math.sqrt((Math.abs(4*n_values[i]*10^3))/(3.14*sigma_s[material]));
 	}
-    if(n_values[i]>0){d_values[i]=Math.sqrt()}
+    if(n_values[i]>0){
+	  if(shape == 1) d_values[i]=Math.sqrt(Math.abs(n_values[i]*10^3)/sigma_r[material]);
+	  if(shape == 3) d_values[i]=Math.sqrt(Math.abs(4*n_values[i]*10^3)/(3.14*sigma_r[material]));
+	}
+	p1_text_results += "d["+(i+1)+"]="+d_values[i]+"<br>";
   }
 }
 
@@ -120,6 +129,7 @@ function alerted() //it all begins here
   calc_sigma();
   calc_dl();
   calc_delta();
+  document.getElementById("p1").innerHTML=p1_text_results;
 }
 
 </script>
@@ -160,6 +170,7 @@ ctx.fillText("но сначала необходимо ввести данные
 <p id="p1"></p></td>
 </tr>
 </table>
+<p>Пользуйся на здоровье, но лучше всё-таки сопромат учи, хотя, если ты это читаешь, от пересдачи тебя это не спасёт =)</p>
 </body>
 
 </html>
