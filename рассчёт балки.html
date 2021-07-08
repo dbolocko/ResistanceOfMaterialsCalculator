@@ -1,6 +1,6 @@
 <html>
 <head>
-<HTA:APPLICATION ID="oHTA"
+<!--<HTA:APPLICATION ID="oHTA"
 APPLICATIONNAME="WMPTour"
 BORDER="thin"
 BORDERSTYLE="normal"
@@ -9,7 +9,7 @@ minimizeButton="no"
 ICON="img/wmptour.ico"
 SINGLEINSTANCE="yes"
 SYSMENU="yes"
-VERSION="1.0"/>
+VERSION="1.0"/>-->
 <title>Расчёт балки</title>
 <script src="propertiesofmaterials.js"></script>
 <script>
@@ -19,8 +19,9 @@ var n_values = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,
 var d_values = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0];
 var shape = 3; // форма сечения
 var material = 0;
-var lb = 0; // длина балки
+var lb = 0.0; // длина балки
 var x = 0; // count of forces
+var materials_names_select_text = "";
 
 function swap(arr, a, b) { //it need 4 sort
 var temp = arr[a];
@@ -43,6 +44,7 @@ return a < b ? Compare.LESS_THAN : Compare.BIGGER_THAN;
 
 function input_forces() // actually, not only forces...
 {
+material = parseInt(prompt(materials_names_select_text,0));
 lb = parseInt(prompt("Длина балки", "5"));
 x = parseInt(prompt("Количество сил", "1"));
 shape = parseInt(prompt("форма сечения: 1-квадратное, 3-круглое", "1"));
@@ -70,11 +72,6 @@ swap(forcesm, j, j + 1);
 return arr;
 }
 
-function fuckin_sum(i, arr, n) //it's not so simple.. 6.7.2021 upd blyat' it's easy
-{
-return n+arr[x-i-1];
-}
-
 function calc_n() // calc niggas bahahahah
 {
 for(var j=x; j!=-1; j--)
@@ -85,7 +82,13 @@ n_values[j] = n_values[j+1]+forcesm[j];
 
 function calc_diam()
 {
-
+  for(var i=0; i<x; i++){
+    if(n_values[i]<0)
+	{
+	  if(shape == 1) d_values[i]=Math.sqrt();
+	}
+    if(n_values[i]>0){d_values[i]=Math.sqrt()}
+  }
 }
 
 function calc_sigma(){}
@@ -96,18 +99,27 @@ function draw_sigma(){}
 function draw_dl(){}
 function draw_delta(){}
 
+function init_materials_names()
+{
+  materials_names_select_text = "материал балки, отправить цифру:";
+  for(var i = 0; i < names_materials.length; i++)
+  {
+    materials_names_select_text = materials_names_select_text + "\n" + i + " - " +names_materials[i];
+  }
+}
 
 function alerted() //it all begins here
 {
-input_forces(); // input forces
-fx=sort_forces(fx, x); //sorting forces 4 more easier calculating "N"
-calc_n(); //
-console.log(n_values);
-console.log(forcesm);
-calc_diam(); //
-calc_sigma();
-calc_dl();
-calc_delta();
+  init_materials_names();
+  input_forces(); // input forces
+  fx=sort_forces(fx, x); //sorting forces 4 more easier calculating "N"
+  calc_n(); //
+  console.log(n_values);
+  console.log(forcesm);
+  calc_diam(); //
+  calc_sigma();
+  calc_dl();
+  calc_delta();
 }
 
 </script>
@@ -115,18 +127,18 @@ calc_delta();
 
 <body>
 <h1>Расчёт на прочность и жёсткость при растяжении и сжатии</h1>
-<h2> ВНИМАНИЕ! для того, чтобы пересчитать результаты
+<h3> ВНИМАНИЕ! для того, чтобы пересчитать результаты, необходимо перезагрузить страницу</h3>
 <table border="2" style="border-collapse:collapse;">
 <tr>
 <th width=300>Эпюры</th>
 <th width=500>Данные</th>
-</tr> <!— заголовки чисто чтобы начать работать —>
+</tr> <!-- заголовки чисто чтобы начать работать -->
 
-<tr> <!— самое интересное —>
+<tr> <!-- самое интересное -->
 <td>
 <center>
 <canvas height='500' width='280' id='example'>я... х№й знает что ты утворил, чтобы увидеть этот текст, но, пожалуйста, верни всё как было. а то эпюр не будет. тебе ведь нужны эпюры?</canvas>
-<!— вот реально —>
+<!-- вот реально -->
 </center>
 <script async>
 var example = document.getElementById("example");
@@ -141,11 +153,11 @@ ctx.strokeText("Тут будут эпюры", 20, 50);
 ctx.font = "italic 10pt Arial";
 ctx.fillText("но сначала необходимо ввести данные", 20, 100);
 // красота, не правда ли?
-alert("пока по дефолту всё рассчитывается для круглого сечения");
-// это важно
 </script>
 </td>
-<td><button type="submit" onclick="alerted();">начать рассчёты</button></td>
+<td>
+<button type="submit" onclick="alerted();">начать рассчёты</button>
+<p id="p1"></p></td>
 </tr>
 </table>
 </body>
