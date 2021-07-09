@@ -92,29 +92,50 @@ function calc_diam()
 	  if(shape == 1)
 	  {
 	    d_values[i]=Math.sqrt((Math.abs(n_values[i])*1000)/sigma_s[material]);
-	    alert(d_values[i]+" = корень( модуль("+n_values[i]+")*1000 / " + sigma_s[material]+")");
 	  }
 	  if(shape == 3)
 	  {
 	    d_values[i]=Math.sqrt((4*Math.abs(n_values[i])*1000)/(3.1415*sigma_s[material]));
-		alert(d_values[i]+" = корень(4 * модуль("+n_values[i]+")*1000 / ( 3.1415 * " + sigma_s[material]+"))");
 	  }
 	}
     if(n_values[i]>0){
 	  if(shape == 1){
-	    
 	    d_values[i]=Math.sqrt(Math.abs(n_values[i])*1000/sigma_r[material]);
-			    alert(d_values[i]+" = корень( модуль("+n_values[i]+")*1000 / " + sigma_r[material]+")");
 	  }
 	  if(shape == 3){
 	    d_values[i]=Math.sqrt(4*Math.abs(n_values[i])*1000/(3.1415*sigma_r[material]));
-		alert(d_values[i]+" = корень(4 * модуль("+n_values[i]+")*1000 / ( 3.1415 * " + sigma_r[material]+"))");
 	  }
 	}
 	p1_text_results += "d["+(i+1)+"]="+d_values[i]+"<br>";
   }
-  p1_text_results += "<br>посмотрю я на тебя, растачивающего вал точно-ровно такого размера =) <br> поэтому будем приведить к нормальным размерам. они так и называются - нормальные размеры.<font color='#888888'>(нормальные, не то что эти психи шизофреники ахахахаххахаха)</font>";
+  p1_text_results += "<br>посмотрю я на тебя, растачивающего вал точно-ровно такого размера =) <br> поэтому будем приведить к нормальным размерам. они так и называются - нормальные размеры.<font color='#888888'>(нормальные, не то что эти психи шизофреники ахахахаххахаха)</font><br>";
+  for(var i=0; i<x; i++)
+  {  
+	var min_p_z_r = 99999;
+	var min_p_z_r_id = 0;
+	var max_o_z_r = -99999;
+	var max_o_z_r_id = 0;
+    for(var j=0; (table_of_normal_sizes[j]-d_values[i]) < 0; j++)
+	{
+	  if((table_of_normal_sizes[j]-d_values[i])>max_o_z_r)
+	  {
+	    max_o_z_r = table_of_normal_sizes[j]-d_values[i];
+		max_o_z_r_id = j;
+	  }
+	}
+	for(var j=max_o_z_r_id; (table_of_normal_sizes[j]-d_values[i]) < table_of_normal_sizes.length; j++)
+	{
+	  if(((table_of_normal_sizes[j]-d_values[i])<min_p_z_r)&&((table_of_normal_sizes[j]-d_values[i])>0))
+	  {
+	    min_p_z_r = table_of_normal_sizes[j]-d_values[i];
+		min_p_z_r_id = j;
+	  }
+	}
+	p1_text_results += "Глядя на таблицу нормальных размеров, мы видим, что близжайшие к числу " +d_values[i]+ " значения это "+table_of_normal_sizes[min_p_z_r_id]+" и "+table_of_normal_sizes[max_o_z_r_id]+"<br> считаем напряжение:";
+	
+  }
 }
+
 
 function calc_sigma(){}
 function calc_dl(){}
