@@ -63,8 +63,8 @@ forcesm[i] = parseInt(prompt("величина силы", "5"));
 function sort_forces(arr, len, compare = defaultCompare) //shitcode
 {
 for (let i = 0; i < len; i++) {
-for (let j = 0; j < len - 1 - i; j++) { // brilliantly
-if (compare(arr[j], arr[j + 1]) === Compare.BIGGER_THAN) {
+for (let j = 0; j < len ; j++) { 
+if (compare(arr[j], arr[j]) === Compare.BIGGER_THAN) {
 swap(arr, j, j + 1);
 swap(forcesm, j, j + 1);
 }
@@ -131,8 +131,64 @@ function calc_diam()
 		min_p_z_r_id = j;
 	  }
 	}
-	p1_text_results += "Глядя на таблицу нормальных размеров, мы видим, что близжайшие к числу " +d_values[i]+ " значения это "+table_of_normal_sizes[min_p_z_r_id]+" и "+table_of_normal_sizes[max_o_z_r_id]+"<br> считаем напряжение:";
-	
+	p1_text_results += "По таблице нормальных размеров, видно, что близжайшие к числу " +d_values[i]+ " значения это "+table_of_normal_sizes[min_p_z_r_id]+" и "+table_of_normal_sizes[max_o_z_r_id]+"<br> проверяем прочность:";
+	if(shape == 1)
+	{
+	  let test_result2 = (n_values[i]*1000)/(table_of_normal_sizes[max_o_z_r_id]*table_of_normal_sizes[max_o_z_r_id]);
+	  if(n_values[i]<0)
+	  {
+		if( ((test_result2 - sigma_s[material])/sigma_s[material])*100 < 5)
+		{
+		  p1_text_results += "перенапряжение равно "+  (((test_result2 - sigma_s[material])/sigma_s[material])*100) + " < 5%, а значит и так сойдёт, d=" + table_of_normal_sizes[max_o_z_r_id]+"<br>";
+		  d_values[i] = table_of_normal_sizes[max_o_z_r_id];
+		}
+		else{
+		  p1_text_results += "перенапряжение равно "+  (((test_result2 - sigma_s[material])/sigma_s[material])*100) + " > 5%, а значит d=" + table_of_normal_sizes[min_p_z_r_id]+"<br>";
+		  d_values[i] = table_of_normal_sizes[min_p_z_r_id];
+		}
+	  }
+	  if(n_values[i]>0)
+	  {
+		if( ((test_result2 - sigma_r[material])/sigma_r[material])*100 < 5)
+		{
+		  p1_text_results += "перенапряжение равно "+  (((test_result2 - sigma_r[material])/sigma_r[material])*100) + " < 5%, а значит и так сойдёт, d=" + table_of_normal_sizes[max_o_z_r_id]+"<br>";
+		  d_values[i] = table_of_normal_sizes[max_o_z_r_id];
+		}
+		else{
+		  p1_text_results += "перенапряжение равно "+  (((test_result2 - sigma_r[material])/sigma_r[material])*100) + " > 5%, а значит d=" + table_of_normal_sizes[min_p_z_r_id]+"<br>";
+		  d_values[i] = table_of_normal_sizes[min_p_z_r_id];
+		} 
+	  }
+	}
+	if(shape == 3)
+	{
+	  let test_result2 = (4000*Math.abs(n_values[i]))/(table_of_normal_sizes[max_o_z_r_id]*table_of_normal_sizes[max_o_z_r_id]*3.14);
+	  alert(test_result2 + "= (4000*"+n_values[i]+")/("+(table_of_normal_sizes[max_o_z_r_id]*table_of_normal_sizes[max_o_z_r_id])+"*3.14);");
+	  if(n_values[i]<0)
+	  {
+		if( ((test_result2 - sigma_s[material])/sigma_s[material])*100 < 5)
+		{
+		  p1_text_results += i+"перенапряжение равно "+  (((test_result2 - sigma_s[material])/sigma_s[material])*100) + " < 5%, а значит и так сойдёт, d=" + table_of_normal_sizes[max_o_z_r_id]+"<br>";
+		  d_values[i] = table_of_normal_sizes[max_o_z_r_id];
+		}
+		else{
+		  p1_text_results += i+"перенапряжение равно "+  (((test_result2 - sigma_s[material])/sigma_s[material])*100) + " > 5%, а значит d=" + table_of_normal_sizes[min_p_z_r_id]+"<br>";
+		  d_values[i] = table_of_normal_sizes[min_p_z_r_id];
+		}
+	  }
+	  if(n_values[i]>0)
+	  {
+		if( ((test_result2 - sigma_r[material])/sigma_r[material])*100 < 5)
+		{
+		  p1_text_results += i+"перенапряжение равно "+  (((test_result2 - sigma_r[material])/sigma_r[material])*100) + " < 5%, а значит и так сойдёт, d=" + table_of_normal_sizes[max_o_z_r_id]+"<br>";
+		  d_values[i] = table_of_normal_sizes[max_o_z_r_id];
+		}
+		else{
+		  p1_text_results += i+"перенапряжение равно "+  (((test_result2 - sigma_r[material])/sigma_r[material])*100) + " > 5%, а значит d=" + table_of_normal_sizes[min_p_z_r_id]+"<br>";
+		  d_values[i] = table_of_normal_sizes[min_p_z_r_id];
+		} 
+	  }
+	}	
   }
 }
 
