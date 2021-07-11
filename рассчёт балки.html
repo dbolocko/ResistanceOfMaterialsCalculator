@@ -17,6 +17,9 @@ var fx =[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
 var forcesm = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0];
 var n_values = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0];
 var d_values = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0];
+var sigma_values = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0];
+var dl_values = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0];
+var delta_values = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0];
 var shape = 3; // форма сечения
 var material = 0;
 var lb = 0.0; // длина балки
@@ -45,18 +48,19 @@ return a < b ? Compare.LESS_THAN : Compare.BIGGER_THAN;
 
 function input_forces() // actually, not only forces...
 {
+document.getElementById("knopkabestnaming").style.display = "none";
 material = parseInt(prompt(materials_names_select_text,0));
-lb = parseInt(prompt("Длина балки", "5"));
+lb = parseInt(prompt("Длина балки в метрах", "5"));
 x = parseInt(prompt("Количество сил", "1"));
 shape = parseInt(prompt("форма сечения: 1-квадратное, 3-круглое", "1"));
 for (var i = 0; i < x; i++) {
-fx[i] = parseInt(prompt("Расстояние от заделки до точки приложения силы("+(i+1)+")", "5"));
+fx[i] = parseInt(prompt("Расстояние от заделки до точки приложения силы в метрах(сила номер "+(i+1)+")", "5"));
 if (fx[i]>lb)
 {
 alert("");
 break;
 }
-forcesm[i] = parseInt(prompt("величина силы", "5"));
+forcesm[i] = parseInt(prompt("величина силы в килоньютонах", "5"));
 }
 }
 
@@ -75,17 +79,17 @@ return arr;
 
 function calc_n() // calc niggas bahahahah
 {
-  p1_text_results = "1. Определение продольных сил на участках стержня<br>"
+  p1_text_results = "	1. Определение продольных сил на участках стержня<br>"
   for(var j=x-1; j!=-1; j--)
   {
     n_values[j] = n_values[j+1]+forcesm[j];
-    p1_text_results += "N["+(x-j)+"] ="+ n_values[j]+"<br>"
+    p1_text_results += "N["+(x-j)+"] ="+ n_values[j]+" кН<br>";
   }
 }
 
 function calc_diam()
 {
-  p1_text_results += "<br> 2. Подбор сечения бруса  равного сопротивления<br>";
+  p1_text_results += "<br>	2. Подбор сечения бруса  равного сопротивления<br>";
   for(var i=0; i<x; i++){
     if(n_values[i]<0)
 	{
@@ -106,9 +110,9 @@ function calc_diam()
 	    d_values[i]=Math.sqrt(4*Math.abs(n_values[i])*1000/(3.1415*sigma_r[material]));
 	  }
 	}
-	p1_text_results += "d["+(i+1)+"]="+d_values[i]+"<br>";
+	p1_text_results += "d["+(x-i)+"]="+d_values[i]+" мм<br>";
   }
-  p1_text_results += "<br>посмотрю я на тебя, растачивающего вал точно-ровно такого размера =) <br> поэтому будем приведить к нормальным размерам. они так и называются - нормальные размеры.<font color='#888888'>(нормальные, не то что эти психи шизофреники ахахахаххахаха)</font><br>";
+  p1_text_results += "<br>	Посмотрю я на тебя, растачивающего вал точно-ровно такого размера =) Поэтому будем приведить к нормальным размерам. они так и называются - нормальные размеры.<font color='#888888'>(нормальные, не то что эти психи шизофреники ахахахаххахаха)</font><br>";
   for(var i=0; i<x; i++)
   {  
 	var min_p_z_r = 99999;
@@ -131,7 +135,7 @@ function calc_diam()
 		min_p_z_r_id = j;
 	  }
 	}
-	p1_text_results += "По таблице нормальных размеров, видно, что близжайшие к числу " +d_values[i]+ " значения это "+table_of_normal_sizes[min_p_z_r_id]+" и "+table_of_normal_sizes[max_o_z_r_id]+"<br> проверяем прочность:";
+	p1_text_results += "Участок "+(x-i)+". По таблице нормальных размеров, видно, что близжайшие к числу " +d_values[i]+ " значения это "+table_of_normal_sizes[min_p_z_r_id]+" и "+table_of_normal_sizes[max_o_z_r_id]+"<br> проверяем прочность:";
 	if(shape == 1)
 	{
 	  let test_result2 = (n_values[i]*1000)/(table_of_normal_sizes[max_o_z_r_id]*table_of_normal_sizes[max_o_z_r_id]);
@@ -139,11 +143,11 @@ function calc_diam()
 	  {
 		if( ((test_result2 - sigma_s[material])/sigma_s[material])*100 < 5)
 		{
-		  p1_text_results += "перенапряжение равно "+  (((test_result2 - sigma_s[material])/sigma_s[material])*100) + " < 5%, а значит и так сойдёт, d=" + table_of_normal_sizes[max_o_z_r_id]+"<br>";
+		  p1_text_results += " перенапряжение равно "+  (((test_result2 - sigma_s[material])/sigma_s[material])*100) + " < 5%, а значит и так сойдёт, d=" + table_of_normal_sizes[max_o_z_r_id]+"<br>";
 		  d_values[i] = table_of_normal_sizes[max_o_z_r_id];
 		}
 		else{
-		  p1_text_results += "перенапряжение равно "+  (((test_result2 - sigma_s[material])/sigma_s[material])*100) + " > 5%, а значит d=" + table_of_normal_sizes[min_p_z_r_id]+"<br>";
+		  p1_text_results += " перенапряжение равно "+  (((test_result2 - sigma_s[material])/sigma_s[material])*100) + " > 5%, а значит d=" + table_of_normal_sizes[min_p_z_r_id]+"<br>";
 		  d_values[i] = table_of_normal_sizes[min_p_z_r_id];
 		}
 	  }
@@ -151,11 +155,11 @@ function calc_diam()
 	  {
 		if( ((test_result2 - sigma_r[material])/sigma_r[material])*100 < 5)
 		{
-		  p1_text_results += "перенапряжение равно "+  (((test_result2 - sigma_r[material])/sigma_r[material])*100) + " < 5%, а значит и так сойдёт, d=" + table_of_normal_sizes[max_o_z_r_id]+"<br>";
+		  p1_text_results += " перенапряжение равно "+  (((test_result2 - sigma_r[material])/sigma_r[material])*100) + " < 5%, а значит и так сойдёт, d=" + table_of_normal_sizes[max_o_z_r_id]+"<br>";
 		  d_values[i] = table_of_normal_sizes[max_o_z_r_id];
 		}
 		else{
-		  p1_text_results += "перенапряжение равно "+  (((test_result2 - sigma_r[material])/sigma_r[material])*100) + " > 5%, а значит d=" + table_of_normal_sizes[min_p_z_r_id]+"<br>";
+		  p1_text_results += " перенапряжение равно "+  (((test_result2 - sigma_r[material])/sigma_r[material])*100) + " > 5%, а значит d=" + table_of_normal_sizes[min_p_z_r_id]+"<br>";
 		  d_values[i] = table_of_normal_sizes[min_p_z_r_id];
 		} 
 	  }
@@ -168,11 +172,11 @@ function calc_diam()
 	  {
 		if( ((test_result2 - sigma_s[material])/sigma_s[material])*100 < 5)
 		{
-		  p1_text_results += i+"перенапряжение равно "+  (((test_result2 - sigma_s[material])/sigma_s[material])*100) + " < 5%, а значит и так сойдёт, d=" + table_of_normal_sizes[max_o_z_r_id]+"<br>";
+		  p1_text_results += " перенапряжение равно "+  (((test_result2 - sigma_s[material])/sigma_s[material])*100) + " < 5%, а значит и так сойдёт, d=" + table_of_normal_sizes[max_o_z_r_id]+"<br>";
 		  d_values[i] = table_of_normal_sizes[max_o_z_r_id];
 		}
 		else{
-		  p1_text_results += i+"перенапряжение равно "+  (((test_result2 - sigma_s[material])/sigma_s[material])*100) + " > 5%, а значит d=" + table_of_normal_sizes[min_p_z_r_id]+"<br>";
+		  p1_text_results += " перенапряжение равно "+  (((test_result2 - sigma_s[material])/sigma_s[material])*100) + " > 5%, а значит d=" + table_of_normal_sizes[min_p_z_r_id]+"<br>";
 		  d_values[i] = table_of_normal_sizes[min_p_z_r_id];
 		}
 	  }
@@ -180,11 +184,11 @@ function calc_diam()
 	  {
 		if( ((test_result2 - sigma_r[material])/sigma_r[material])*100 < 5)
 		{
-		  p1_text_results += i+"перенапряжение равно "+  (((test_result2 - sigma_r[material])/sigma_r[material])*100) + " < 5%, а значит и так сойдёт, d=" + table_of_normal_sizes[max_o_z_r_id]+"<br>";
+		  p1_text_results += " перенапряжение равно "+  (((test_result2 - sigma_r[material])/sigma_r[material])*100) + " < 5%, а значит и так сойдёт, d=" + table_of_normal_sizes[max_o_z_r_id]+"<br>";
 		  d_values[i] = table_of_normal_sizes[max_o_z_r_id];
 		}
 		else{
-		  p1_text_results += i+"перенапряжение равно "+  (((test_result2 - sigma_r[material])/sigma_r[material])*100) + " > 5%, а значит d=" + table_of_normal_sizes[min_p_z_r_id]+"<br>";
+		  p1_text_results += " перенапряжение равно "+  (((test_result2 - sigma_r[material])/sigma_r[material])*100) + " > 5%, а значит d=" + table_of_normal_sizes[min_p_z_r_id]+"<br>";
 		  d_values[i] = table_of_normal_sizes[min_p_z_r_id];
 		} 
 	  }
@@ -193,7 +197,26 @@ function calc_diam()
 }
 
 
-function calc_sigma(){}
+function calc_sigma()
+{
+  p1_text_results += "<br>3. Определение напряжений на участках стержней<br>";
+  if(shape==1)
+  {
+    for(var i = 0; i<x; i++)
+    {
+      sigma_values[i] = (1000*Math.abs(n_values[i])/(d_values[i]*d_values[i]));
+	  p1_text_results += "σ["+(x-i)+"]="+sigma_values[i]+" МПа<br>";
+    }
+  }
+  if(shape==3)
+  {
+    for(var i = 0; i<x; i++)
+    {
+      sigma_values[i] = ((4000*Math.abs(n_values[i]))/(3.1415*d_values[i]*d_values[i]));
+	  p1_text_results += "σ["+(x-i)+"]="+sigma_values[i]+" МПа<br>";
+    }
+  }
+}
 function calc_dl(){}
 function calc_delta(){}
 function draw_diam(){}
@@ -216,8 +239,6 @@ function alerted() //it all begins here
   input_forces(); // input forces
   fx=sort_forces(fx, x); //sorting forces 4 more easier calculating "N"
   calc_n(); //
-  console.log(n_values);
-  console.log(forcesm);
   calc_diam(); //
   calc_sigma();
   calc_dl();
@@ -259,11 +280,10 @@ ctx.fillText("но сначала необходимо ввести данные
 </script>
 </td>
 <td>
-<button type="submit" onclick="alerted();">начать рассчёты</button>
+<button type="submit" onclick="alerted();" id="knopkabestnaming">начать рассчёты</button>
 <p id="p1"></p></td>
 </tr>
 </table>
 <p>Пользуйся на здоровье, но лучше всё-таки сопромат учи, хотя, если ты это читаешь, от пересдачи тебя это не спасёт =)</p>
 </body>
-
 </html>
