@@ -50,16 +50,11 @@ function input_forces() // actually, not only forces...
 {
 document.getElementById("knopkabestnaming").style.display = "none";
 material = parseInt(prompt(materials_names_select_text,0));
-lb = parseInt(prompt("Длина балки в метрах", "5"));
+lb = parseFloat(prompt("Длина балки в метрах", "5"));
 x = parseInt(prompt("Количество сил", "1"));
 shape = parseInt(prompt("форма сечения: 1-квадратное, 3-круглое", "1"));
 for (var i = 0; i < x; i++) {
-fx[i] = parseInt(prompt("Расстояние от заделки до точки приложения силы в метрах(сила номер "+(i+1)+")", "5"));
-if (fx[i]>lb)
-{
-alert("");
-break;
-}
+fx[i] = parseFloat(prompt("Расстояние от заделки до точки приложения силы в метрах(сила номер "+(i+1)+")", "5"));
 forcesm[i] = parseInt(prompt("величина силы в килоньютонах", "5"));
 }
 }
@@ -217,7 +212,30 @@ function calc_sigma()
     }
   }
 }
-function calc_dl(){}
+function calc_dl()
+{
+  p1_text_results += "<br> 4. Определение абсолютных деформаций участков стержня.<br>";
+  if(shape==1)
+  {
+    d_values[0] = (n_values[0]*1000*fx[0]*1000)/(E[material]*d_values[0]*d_values[0]);
+	p1_text_results +="Δl["+0+"]="+dl_values[0]+"<br>";
+    for(var i=1; i<x; i++)
+	{
+	  dl_values[i] = (n_values[i]*1000*(fx[i]-fx[i-1])*1000)/(E[material]*d_values[i]*d_values[i]);
+	  p1_text_results +="Δl["+i+"]="+dl_values[i]+"<br>";
+	}
+  }
+  if(shape==3)
+  {
+    dl_values[0] = (4*n_values[0]*1000*(fx[0])*1000)/(3.1415*E[material]*d_values[0]*d_values[0]);
+	p1_text_results +="Δl["+0+"]="+dl_values[0]+"<br>";
+    for(var i=1; i<x; i++)
+	{
+	  dl_values[i] = (4*n_values[i]*1000*(fx[i]-fx[i-1])*1000)/(3.1415*E[material]*d_values[i]*d_values[i]);
+	  p1_text_results +="Δl["+i+"]="+dl_values[i]+"<br>";
+	}
+  }
+}
 function calc_delta(){}
 function draw_diam(){}
 function draw_sigma(){}
@@ -237,7 +255,7 @@ function alerted() //it all begins here
 {
   init_materials_names();
   input_forces(); // input forces
-  fx=sort_forces(fx, x); //sorting forces 4 more easier calculating "N"
+  //fx=sort_forces(fx, x); //sorting forces 4 more easier calculating "N"
   calc_n(); //
   calc_diam(); //
   calc_sigma();
