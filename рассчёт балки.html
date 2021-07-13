@@ -26,6 +26,7 @@ var lb = 0.0; // длина балки
 var x = 0; // count of forces
 var materials_names_select_text = "";
 var p1_text_results = "";
+var start_graphics_x = 25;
 
 
 function swap(arr, a, b) { //it need 4 sort
@@ -266,9 +267,15 @@ function draw_start()
   ctx.fillRect(0, 0, example.width, example.height);
   ctx.beginPath();
   ctx.fill(); 
-  ctx.moveTo(15, 20);
-  ctx.lineTo(15, 70);
-  
+  ctx.moveTo(start_graphics_x, 20);
+  ctx.lineTo(start_graphics_x, 70);
+  for(var i=22; i<70; i+=5)
+  {
+    ctx.moveTo(start_graphics_x, i);
+    ctx.lineTo(start_graphics_x-4, i+4);
+  }
+  ctx.moveTo(start_graphics_x,30);
+  ctx.lineTo(250,30);
   ctx.stroke(); // *22
   ctx.closePath();
 }
