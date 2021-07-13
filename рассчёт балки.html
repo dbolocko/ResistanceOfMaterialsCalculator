@@ -27,6 +27,7 @@ var x = 0; // count of forces
 var materials_names_select_text = "";
 var p1_text_results = "";
 
+
 function swap(arr, a, b) { //it need 4 sort
 var temp = arr[a];
 arr[a] = arr[b];
@@ -52,9 +53,10 @@ document.getElementById("knopkabestnaming").style.display = "none";
 material = parseInt(prompt(materials_names_select_text,0));
 lb = parseFloat(prompt("Длина балки в метрах", "5"));
 x = parseInt(prompt("Количество сил", "1"));
-shape = parseInt(prompt("форма сечения: 1-квадратное, 3-круглое", "1"));
+shape = parseInt(prompt("форма сечения: 1-квадратное, 3-круглое", "3"));
 for (var i = 0; i < x; i++) {
 fx[i] = parseFloat(prompt("Расстояние от заделки до точки приложения силы в метрах(сила номер "+(i+1)+")", "5"));
+//alert(fx[i]);
 forcesm[i] = parseInt(prompt("величина силы в килоньютонах", "5"));
 }
 }
@@ -215,6 +217,7 @@ function calc_sigma()
 function calc_dl()
 {
   p1_text_results += "<br> 4. Определение абсолютных деформаций участков стержня.<br>";
+  var temp_sum =0;
   if(shape==1)
   {
     d_values[0] = (n_values[0]*1000*fx[0]*1000)/(E[material]*d_values[0]*d_values[0]);
@@ -226,17 +229,49 @@ function calc_dl()
 	}
   }
   if(shape==3)
-  {
+  { 
     dl_values[0] = (4*n_values[0]*1000*(fx[0])*1000)/(3.1415*E[material]*d_values[0]*d_values[0]);
-	p1_text_results +="Δl["+0+"]="+dl_values[0]+"<br>";
-    for(var i=1; i<x; i++)
+    p1_text_results +="Δl["+0+"]="+dl_values[0]+"<br>";
+	for(var i=1; i<x; i++)
 	{
 	  dl_values[i] = (4*n_values[i]*1000*(fx[i]-fx[i-1])*1000)/(3.1415*E[material]*d_values[i]*d_values[i]);
 	  p1_text_results +="Δl["+i+"]="+dl_values[i]+"<br>";
 	}
   }
+  for(var i=0;i<x;i++)
+  {
+    temp_sum+=dl_values[i];
+  }
+  p1_text_results+= "Δl полное="+temp_sum+"<br>";
 }
-function calc_delta(){}
+function calc_delta()
+{
+  var temp_alphabet="abcdefghijklmnopqrstuvwxyz";
+  var temp_sum =0;
+  p1_text_results += "<br> 5. Определение перемещений сечений стержня<br>δ["+temp_alphabet[x]+"]=0<br>";
+  for(var i=0;i<x;i++)
+  {
+    temp_sum+=dl_values[i];
+	delta_values[i] = temp_sum;
+	p1_text_results += "δ["+temp_alphabet[x-i-1]+"]="+temp_sum+"<br>";
+  }
+  p1_text_results += "всё =)";
+}
+function draw_start()
+{
+  var example = document.getElementById("example");
+  var ctx = example.getContext('2d');
+  ctx.fillStyle = "white";
+  ctx.strokeStyle = "black";
+  ctx.fillRect(0, 0, example.width, example.height);
+  ctx.beginPath();
+  ctx.fill(); 
+  ctx.moveTo(15, 20);
+  ctx.lineTo(15, 70);
+  
+  ctx.stroke(); // *22
+  ctx.closePath();
+}
 function draw_diam(){}
 function draw_sigma(){}
 function draw_dl(){}
@@ -262,6 +297,7 @@ function alerted() //it all begins here
   calc_dl();
   calc_delta();
   document.getElementById("p1").innerHTML=p1_text_results;
+  draw_start();
 }
 
 </script>
