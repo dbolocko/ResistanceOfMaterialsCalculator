@@ -26,7 +26,7 @@ var lb = 0.0; // длина балки
 var x = 0; // count of forces
 var materials_names_select_text = "";
 var p1_text_results = "";
-var start_graphics_x = 25;
+var start_graphics_x = 30;
 
 
 function swap(arr, a, b) { //it need 4 sort
@@ -57,7 +57,7 @@ x = parseInt(prompt("Количество сил", "1"));
 shape = parseInt(prompt("форма сечения: 1-квадратное, 3-круглое", "3"));
 for (var i = 0; i < x; i++) {
 fx[i] = parseFloat(prompt("Расстояние от заделки до точки приложения силы в метрах(сила номер "+(i+1)+")", "5"));
-//alert(fx[i]);
+alert(fx[i]);
 forcesm[i] = parseInt(prompt("величина силы в килоньютонах", "5"));
 }
 }
@@ -258,6 +258,78 @@ function calc_delta()
   }
   p1_text_results += "всё =)";
 }
+function special_line(c,type,xx,yy,xx1,yy1, param)
+{
+  if(type==1)  //линия заделки
+  {
+    for(var i=yy; i<yy1; i+=param)
+    {
+      c.moveTo(xx, i);
+      c.lineTo(xx-param, i+param);
+    }
+  }
+  if(type==2)  //линия штрихпунктирная
+  {  
+    var nn=1;
+	c.moveTo(xx,yy);
+    for(var i=xx; i<xx1; i++)
+    {
+	  if(nn==1){
+	  i+=12
+	  }
+	  else if(nn==2){
+	  i+=1
+	  }
+	  else if(nn==3){
+	  i+=1
+	  }
+	  else if(nn=4)
+	  {
+	  i+=1
+	  };
+      if(nn==1)
+	  {
+	    c.lineTo(i,yy); 
+		nn++;
+	  }
+	  else if(nn==2)
+	  {
+	    c.moveTo(i,yy);
+		nn++;
+	  }
+	  else if(nn==3)
+	  {
+	    c.lineTo(i,yy);
+		nn++;
+	  }
+	  else if(nn==4)
+	  {
+	    c.moveTo(i,yy);
+		nn=1;
+	  }
+    }
+  }
+  if(type==3)
+  {
+    c.moveTo(xx,yy);
+	c.fillStyle = "red";
+    c.strokeStyle = "purple";
+	c.arc(xx, yy, 4, 0, Math.PI*2, true); 
+	if(param<0)
+	{
+	  
+	}
+	else
+	{
+	  
+	}
+  }
+}
+function epur_coord_x(param)
+{
+  temp_value = start_graphics_x+(((example.width - start_graphics_x*3)/lb)*param);
+  return temp_value
+}
 function draw_start()
 {
   var example = document.getElementById("example");
@@ -269,13 +341,20 @@ function draw_start()
   ctx.fill(); 
   ctx.moveTo(start_graphics_x, 20);
   ctx.lineTo(start_graphics_x, 70);
-  for(var i=22; i<70; i+=5)
-  {
-    ctx.moveTo(start_graphics_x, i);
-    ctx.lineTo(start_graphics_x-4, i+4);
-  }
+  special_line(ctx, 1, start_graphics_x, 22, start_graphics_x, 70, 5); // заделка
   ctx.moveTo(start_graphics_x,30);
-  ctx.lineTo(250,30);
+  ctx.lineTo(example.width-(start_graphics_x*2),30);
+  ctx.lineTo(example.width-(start_graphics_x*2), 60);
+  ctx.lineTo(start_graphics_x, 60);
+  special_line(ctx,2, start_graphics_x - 11, 45, example.width-(start_graphics_x*2)+11, 45, 5); //ось
+  ctx.stroke();
+  //ctx.closePath();
+  ctx.beginPath();
+  
+  for( var i=0; i<x; i++)
+  {
+    special_line(ctx,3, epur_coord_x(fx[i]), 45, 1,1, forcesm[i]);
+  }
   ctx.stroke(); // *22
   ctx.closePath();
 }
@@ -322,7 +401,7 @@ function alerted() //it all begins here
 <tr> <!-- самое интересное -->
 <td>
 <center>
-<canvas height='500' width='280' id='example'>я... х№й знает что ты утворил, чтобы увидеть этот текст, но, пожалуйста, верни всё как было. а то эпюр не будет. тебе ведь нужны эпюры?</canvas>
+<canvas height='500' width='300' id='example'>я... х№й знает что ты утворил, чтобы увидеть этот текст, но, пожалуйста, верни всё как было. а то эпюр не будет. тебе ведь нужны эпюры?</canvas>
 <!-- вот реально -->
 </center>
 <script async>
