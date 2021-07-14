@@ -56,7 +56,7 @@ lb = parseFloat(prompt("Длина балки в метрах", "5"));
 x = parseInt(prompt("Количество сил", "1"));
 shape = parseInt(prompt("форма сечения: 1-квадратное, 3-круглое", "3"));
 for (var i = 0; i < x; i++) {
-fx[i] = parseFloat(prompt("Расстояние от заделки до точки приложения силы в метрах(сила номер "+(i+1)+")", "5"));
+fx[i] = parseFloat(prompt("Расстояние от заделки до точки приложения силы в метрах(сила номер "+(i+1)+")", "0.1"));
 alert(fx[i]);
 forcesm[i] = parseInt(prompt("величина силы в килоньютонах", "5"));
 }
@@ -311,18 +311,26 @@ function special_line(c,type,xx,yy,xx1,yy1, param)
   }
   if(type==3)
   {
-    c.moveTo(xx,yy);
 	c.fillStyle = "red";
     c.strokeStyle = "purple";
-	c.arc(xx, yy, 4, 0, Math.PI*2, true); 
+	c.arc(xx, yy, 3, 0, Math.PI*2, true); 
+	c.moveTo(xx,yy);
+	c.moveTo(xx,yy);
 	if(param<0)
 	{
-	  
+	  c.lineTo(xx-20,yy);
+	  c.lineTo(xx-8,yy+3);
+	  c.lineTo(xx-8,yy-3);
+	  c.lineTo(xx-20,yy);
 	}
 	else
 	{
-	  
+	  c.lineTo(xx+20,yy);
+	  c.lineTo(xx+8,yy+3);
+	  c.lineTo(xx+8,yy-3);
+	  c.lineTo(xx+20,yy);
 	}
+	c.moveTo(xx1,yy1);
   }
 }
 function epur_coord_x(param)
@@ -353,7 +361,7 @@ function draw_start()
   
   for( var i=0; i<x; i++)
   {
-    special_line(ctx,3, epur_coord_x(fx[i]), 45, 1,1, forcesm[i]);
+    special_line(ctx,3, epur_coord_x(fx[i]), 45, epur_coord_x(fx[i+1]), 45, forcesm[i]);
   }
   ctx.stroke(); // *22
   ctx.closePath();
@@ -420,6 +428,8 @@ ctx.fillText("но сначала необходимо ввести данные
 </script>
 </td>
 <td>
+<!--<h3 id="header1">header</h3>
+<input type="text" id="kye" value="0" />-->
 <button type="submit" onclick="alerted();" id="knopkabestnaming">начать рассчёты</button>
 <p id="p1"></p></td>
 </tr>
