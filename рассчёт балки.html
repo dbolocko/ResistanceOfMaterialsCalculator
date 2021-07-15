@@ -27,6 +27,7 @@ var x = 0; // count of forces
 var materials_names_select_text = "";
 var p1_text_results = "";
 var start_graphics_x = 30;
+var start_graphics_y = 70;
 
 
 function swap(arr, a, b) { //it need 4 sort
@@ -330,7 +331,22 @@ function special_line(c,type,xx,yy,xx1,yy1, param)
 	  c.lineTo(xx+8,yy-3);
 	  c.lineTo(xx+20,yy);
 	}
+	c.fill();
 	c.moveTo(xx1,yy1);
+  }
+  if(type==4)
+  {
+    c.fillStyle = "black";
+    c.strokeStyle = "black";
+	c.moveTo(xx,yy);
+	c.lineTo(xx,yy-30);
+	c.moveTo(xx1,yy1);
+	c.lineTo(xx1,yy1-30);
+	c.lineTo(xx,yy-30);
+	c.textAlign = "center";
+    c.textBaseline = "bottom";
+	c.font = "italic 10pt Arial";
+    c.fillText(param, (xx+xx1)/2, ((yy+yy1)/2)-15);
   }
 }
 function epur_coord_x(param)
@@ -347,21 +363,24 @@ function draw_start()
   ctx.fillRect(0, 0, example.width, example.height);
   ctx.beginPath();
   ctx.fill(); 
-  ctx.moveTo(start_graphics_x, 20);
-  ctx.lineTo(start_graphics_x, 70);
-  special_line(ctx, 1, start_graphics_x, 22, start_graphics_x, 70, 5); // заделка
-  ctx.moveTo(start_graphics_x,30);
-  ctx.lineTo(example.width-(start_graphics_x*2),30);
-  ctx.lineTo(example.width-(start_graphics_x*2), 60);
-  ctx.lineTo(start_graphics_x, 60);
-  special_line(ctx,2, start_graphics_x - 11, 45, example.width-(start_graphics_x*2)+11, 45, 5); //ось
+  ctx.moveTo(start_graphics_x, start_graphics_y-25);
+  ctx.lineTo(start_graphics_x, start_graphics_y+25);
+  special_line(ctx, 1, start_graphics_x, start_graphics_y - 27, start_graphics_x, start_graphics_y + 27, 5); // заделка
+  ctx.moveTo(start_graphics_x,start_graphics_y-15);
+  ctx.lineTo(example.width-(start_graphics_x*2),start_graphics_y-15);
+  ctx.lineTo(example.width-(start_graphics_x*2), start_graphics_y+15);
+  ctx.lineTo(start_graphics_x, start_graphics_y+15);
+  special_line(ctx,2, start_graphics_x - 11, start_graphics_y, example.width-(start_graphics_x*2)+11, start_graphics_y, 5); //ось
   ctx.stroke();
   //ctx.closePath();
   ctx.beginPath();
-  
   for( var i=0; i<x; i++)
   {
-    special_line(ctx,3, epur_coord_x(fx[i]), 45, epur_coord_x(fx[i+1]), 45, forcesm[i]);
+    special_line(ctx,3, epur_coord_x(fx[i]), start_graphics_y, epur_coord_x(fx[i+1]), start_graphics_y, forcesm[i]); //стрелочки с силами
+  }
+  for( var i=0; i<x; i++)
+  {
+    special_line(ctx,4, epur_coord_x(0), start_graphics_y-(i*10), epur_coord_x(fx[i]), start_graphics_y-(i*10), fx[i]); //sizes
   }
   ctx.stroke(); // *22
   ctx.closePath();
