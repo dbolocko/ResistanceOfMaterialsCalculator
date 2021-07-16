@@ -28,7 +28,8 @@ var materials_names_select_text = "";
 var p1_text_results = "";
 var start_graphics_x = 30;
 var start_graphics_y = 70;
-
+var distance_y_graphics = 70;
+var alphabet="abcdefghijklmnopqrstuvwxyz";
 
 function swap(arr, a, b) { //it need 4 sort
 var temp = arr[a];
@@ -58,7 +59,6 @@ x = parseInt(prompt("Количество сил", "1"));
 shape = parseInt(prompt("форма сечения: 1-квадратное, 3-круглое", "3"));
 for (var i = 0; i < x; i++) {
 fx[i] = parseFloat(prompt("Расстояние от заделки до точки приложения силы в метрах(сила номер "+(i+1)+")", "0.1"));
-alert(fx[i]);
 forcesm[i] = parseInt(prompt("величина силы в килоньютонах", "5"));
 }
 }
@@ -166,7 +166,7 @@ function calc_diam()
 	if(shape == 3)
 	{
 	  let test_result2 = (4000*Math.abs(n_values[i]))/(table_of_normal_sizes[max_o_z_r_id]*table_of_normal_sizes[max_o_z_r_id]*3.14);
-	  alert(test_result2 + "= (4000*"+n_values[i]+")/("+(table_of_normal_sizes[max_o_z_r_id]*table_of_normal_sizes[max_o_z_r_id])+"*3.14);");
+	  //alert(test_result2 + "= (4000*"+n_values[i]+")/("+(table_of_normal_sizes[max_o_z_r_id]*table_of_normal_sizes[max_o_z_r_id])+"*3.14);");
 	  if(n_values[i]<0)
 	  {
 		if( ((test_result2 - sigma_s[material])/sigma_s[material])*100 < 5)
@@ -248,14 +248,13 @@ function calc_dl()
 }
 function calc_delta()
 {
-  var temp_alphabet="abcdefghijklmnopqrstuvwxyz";
   var temp_sum =0;
-  p1_text_results += "<br> 5. Определение перемещений сечений стержня<br>δ["+temp_alphabet[x]+"]=0<br>";
+  p1_text_results += "<br> 5. Определение перемещений сечений стержня<br>δ["+alphabet[x]+"]=0<br>";
   for(var i=0;i<x;i++)
   {
     temp_sum+=dl_values[i];
 	delta_values[i] = temp_sum;
-	p1_text_results += "δ["+temp_alphabet[x-i-1]+"]="+temp_sum+"<br>";
+	p1_text_results += "δ["+alphabet[x-i-1]+"]="+temp_sum+"<br>";
   }
   p1_text_results += "всё =)";
 }
@@ -339,14 +338,14 @@ function special_line(c,type,xx,yy,xx1,yy1, param)
     c.fillStyle = "black";
     c.strokeStyle = "black";
 	c.moveTo(xx,yy);
-	c.lineTo(xx,yy-30);
-	c.moveTo(xx1,yy1);
+	c.lineTo(xx,yy1-30);
+	c.moveTo(xx1,yy);
 	c.lineTo(xx1,yy1-30);
-	c.lineTo(xx,yy-30);
+	c.lineTo(xx,yy1-30);
 	c.textAlign = "center";
     c.textBaseline = "bottom";
-	c.font = "italic 10pt Arial";
-    c.fillText(param, (xx+xx1)/2, ((yy+yy1)/2)-15);
+	c.font = "italic 8pt Arial";
+    c.fillText(param, (xx+xx1)/2, yy1-30);
   }
 }
 function epur_coord_x(param)
@@ -354,10 +353,20 @@ function epur_coord_x(param)
   temp_value = start_graphics_x+(((example.width - start_graphics_x*3)/lb)*param);
   return temp_value
 }
+function dot_with_txt(c,xx,yy,param)
+{
+  c.fillStyle = "black";
+  c.strokeStyle = "black";
+  c.textAlign = "left";
+  c.textBaseline = "bottom";
+  c.font = "italic 8pt Arial";
+  c.fillText(param, xx, yy);
+};
 function draw_start()
 {
   var example = document.getElementById("example");
   var ctx = example.getContext('2d');
+  
   ctx.fillStyle = "white";
   ctx.strokeStyle = "black";
   ctx.fillRect(0, 0, example.width, example.height);
@@ -380,9 +389,14 @@ function draw_start()
   }
   for( var i=0; i<x; i++)
   {
-    special_line(ctx,4, epur_coord_x(0), start_graphics_y-(i*10), epur_coord_x(fx[i]), start_graphics_y-(i*10), fx[i]); //sizes
+    special_line(ctx,4, epur_coord_x(0), start_graphics_y, epur_coord_x(fx[i]), start_graphics_y-(i*10), fx[i]); //sizes
   }
-  ctx.stroke(); // *22
+  dot_with_txt(ctx, start_graphics_x+10, start_graphics_y, alphabet[x]);
+  for(var i=0;i<x;i++)
+  {
+	dot_with_txt(ctx,epur_coord_x(fx[i]),start_graphics_y,alphabet[x-i-1]);
+  }
+  ctx.stroke(); 
   ctx.closePath();
 }
 function draw_diam(){}
@@ -403,7 +417,7 @@ function alerted() //it all begins here
 {
   init_materials_names();
   input_forces(); // input forces
-  //fx=sort_forces(fx, x); //sorting forces 4 more easier calculating "N"
+  fx=sort_forces(fx, x); //sorting forces 4 more easier calculating "N"
   calc_n(); //
   calc_diam(); //
   calc_sigma();
