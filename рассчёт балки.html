@@ -403,6 +403,11 @@ function draw_start()
   {
 	dot_with_txt(ctx,epur_coord_x(fx[i]),start_graphics_y,alphabet[x-i-1]);
   }
+  for(var i=0; i<x; i++)
+  {
+	ctx.moveTo(example.width-(start_graphics_x*2),(start_graphics_y*(i+2))-15);
+	ctx.lineTo(example.width-(start_graphics_x*2),(start_graphics_y*(i+2))+15);
+  }
   //pls ne zabros'
   ctx.stroke(); 
   ctx.closePath();
