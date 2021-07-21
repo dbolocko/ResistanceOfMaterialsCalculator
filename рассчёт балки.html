@@ -338,14 +338,21 @@ function special_line(c,type,xx,yy,xx1,yy1, param)
     c.fillStyle = "black";
     c.strokeStyle = "black";
 	c.moveTo(xx,yy);
-	c.lineTo(xx,yy1-30);
+	c.lineTo(xx,yy1);
+	c.lineTo(xx+8,yy1-4);
+	c.lineTo(xx+8,yy1+4);
+	c.lineTo(xx,yy1);
+	c.lineTo(xx,yy1);
 	c.moveTo(xx1,yy);
-	c.lineTo(xx1,yy1-30);
-	c.lineTo(xx,yy1-30);
+	c.lineTo(xx1,yy1);
+	c.lineTo(xx1-8,yy1-4);
+	c.lineTo(xx1-8,yy1+4);
+	c.lineTo(xx1,yy1);
+	c.lineTo(xx,yy1);
 	c.textAlign = "center";
     c.textBaseline = "bottom";
 	c.font = "italic 8pt Arial";
-    c.fillText(param, (xx+xx1)/2, yy1-30);
+    c.fillText(param, (xx+xx1)/2, yy1);
   }
 }
 function epur_coord_x(param)
@@ -389,13 +396,14 @@ function draw_start()
   }
   for( var i=0; i<x; i++)
   {
-    special_line(ctx,4, epur_coord_x(0), start_graphics_y, epur_coord_x(fx[i]), start_graphics_y-(i*10), fx[i]); //sizes
+    special_line(ctx,4, epur_coord_x(0), start_graphics_y, epur_coord_x(fx[i]), start_graphics_y-(i*10)-30, fx[i]); //sizes
   }
   dot_with_txt(ctx, start_graphics_x+10, start_graphics_y, alphabet[x]);
   for(var i=0;i<x;i++)
   {
 	dot_with_txt(ctx,epur_coord_x(fx[i]),start_graphics_y,alphabet[x-i-1]);
   }
+  //pls ne zabros'
   ctx.stroke(); 
   ctx.closePath();
 }
