@@ -403,10 +403,13 @@ function draw_start()
   {
 	dot_with_txt(ctx,epur_coord_x(fx[i]),start_graphics_y,alphabet[x-i-1]);
   }
-  for(var i=0; i<x; i++)
+  for(var i=0; i<x-1; i++)
   {
 	ctx.moveTo(example.width-(start_graphics_x*2),(start_graphics_y*(i+2))-15);
 	ctx.lineTo(example.width-(start_graphics_x*2),(start_graphics_y*(i+2))+15);
+	ctx.lineTo(epur_coord_x((fx[x-i-1]+fx[x-i-2])/2),(start_graphics_y*(i+2))+15);
+	ctx.moveTo(epur_coord_x((fx[x-i-1]+fx[x-i-2])/2),(start_graphics_y*(i+2))-15);
+	ctx.lineTo(example.width-(start_graphics_x*2),(start_graphics_y*(i+2))-15);
   }
   //pls ne zabros'
   ctx.stroke(); 
