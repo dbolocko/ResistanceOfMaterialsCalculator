@@ -63,7 +63,7 @@ forcesm[i] = parseInt(prompt("величина силы в килоньютон�
 }
 }
 
-function sort_forces(arr, len, compare = defaultCompare) //shitcode
+function sort_forces(arr, len, compare = defaultCompare) //УЖАС
 {
 for (let i = 0; i < len; i++) {
 for (let j = 0; j < len ; j++) { 
@@ -330,7 +330,7 @@ function special_line(c,type,xx,yy,xx1,yy1, param)
 	  c.lineTo(xx+8,yy-3);
 	  c.lineTo(xx+20,yy);
 	}
-	c.fill();
+	
 	c.moveTo(xx1,yy1);
   }
   if(type==4)
@@ -360,7 +360,7 @@ function epur_coord_x(param)
   temp_value = start_graphics_x+(((example.width - start_graphics_x*3)/lb)*param);
   return temp_value
 }
-function dot_with_txt(c,xx,yy,param)
+function dot_with_txt(c,xx,yy,param) // haha text without dot
 {
   c.fillStyle = "black";
   c.strokeStyle = "black";
@@ -403,15 +403,34 @@ function draw_start()
   {
 	dot_with_txt(ctx,epur_coord_x(fx[i]),start_graphics_y,alphabet[x-i-1]);
   }
-  for(var i=0; i<x-1; i++)
+  ctx.fillStyle = "black";
+  ctx.strokeStyle = "black";
+  for(var i=0; i!=x-1; i++)
   {
 	ctx.moveTo(example.width-(start_graphics_x*2),(start_graphics_y*(i+2))-15);
 	ctx.lineTo(example.width-(start_graphics_x*2),(start_graphics_y*(i+2))+15);
 	ctx.lineTo(epur_coord_x((fx[x-i-1]+fx[x-i-2])/2),(start_graphics_y*(i+2))+15);
 	ctx.moveTo(epur_coord_x((fx[x-i-1]+fx[x-i-2])/2),(start_graphics_y*(i+2))-15);
 	ctx.lineTo(example.width-(start_graphics_x*2),(start_graphics_y*(i+2))-15);
+	ctx.moveTo(epur_coord_x((fx[x-i-1]+fx[x-i-2])/2),(start_graphics_y*(i+2))+15);
+	ctx.lineTo(epur_coord_x((fx[x-i-1]+fx[x-i-2])/2), start_graphics_y-20);
+	dot_with_txt(ctx, epur_coord_x((fx[x-i-1]+fx[x-i-2])/2), start_graphics_y-15, i+1);
+	for(var j=0; j<i+1; j++)
+	{
+	    special_line(ctx,3, epur_coord_x(fx[x-i-1]), start_graphics_y*(i+2), epur_coord_x(fx[i+1]), start_graphics_y, forcesm[i]);
+	}
   }
-  //pls ne zabros'
+  ctx.fillStyle = "black";
+  ctx.strokeStyle = "black";
+  ctx.moveTo(example.width-(start_graphics_x*2),start_graphics_y*(x+1)-15);
+  ctx.lineTo(example.width-(start_graphics_x*2),start_graphics_y*(x+1)+15);
+  ctx.lineTo(epur_coord_x(fx[0]/2),start_graphics_y*(x+1)+15);
+  ctx.moveTo(epur_coord_x(fx[0]/2),start_graphics_y*(x+1)-15);
+  ctx.lineTo(example.width-(start_graphics_x*2),start_graphics_y*(x+1)-15);
+  ctx.moveTo(epur_coord_x(fx[0]/2),start_graphics_y*(x+1)+15);
+  ctx.lineTo(epur_coord_x(fx[0]/2), start_graphics_y-20);
+
+ 
   ctx.stroke(); 
   ctx.closePath();
 }
@@ -458,7 +477,7 @@ function alerted() //it all begins here
 <tr> <!-- самое интересное -->
 <td>
 <center>
-<canvas height='500' width='300' id='example'>я... х№й знает что ты утворил, чтобы увидеть этот текст, но, пожалуйста, верни всё как было. а то эпюр не будет. тебе ведь нужны эпюры?</canvas>
+<canvas height='500' width='300' id='example'> пожалуйста, верни всё как было. а то эпюр не будет. тебе ведь нужны эпюры?</canvas>
 <!-- вот реально -->
 </center>
 <script async>
