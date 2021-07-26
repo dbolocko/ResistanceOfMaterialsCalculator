@@ -330,8 +330,9 @@ function special_line(c,type,xx,yy,xx1,yy1, param)
 	  c.lineTo(xx+8,yy-3);
 	  c.lineTo(xx+20,yy);
 	}
-	
-	c.moveTo(xx1,yy1);
+	c.fillStyle = "black";
+    c.strokeStyle = "black";
+	c.moveTo(xx,yy);
   }
   if(type==4)
   {
@@ -349,6 +350,7 @@ function special_line(c,type,xx,yy,xx1,yy1, param)
 	c.lineTo(xx1-8,yy1+4);
 	c.lineTo(xx1,yy1);
 	c.lineTo(xx,yy1);
+	c.moveTo(xx,yy1);
 	c.textAlign = "center";
     c.textBaseline = "bottom";
 	c.font = "italic 8pt Arial";
@@ -367,6 +369,7 @@ function dot_with_txt(c,xx,yy,param) // haha text without dot
   c.textAlign = "left";
   c.textBaseline = "bottom";
   c.font = "italic 8pt Arial";
+  c.arc(xx, yy, 2, 0, Math.PI*2, true); 
   c.fillText(param, xx, yy);
 };
 function draw_start()
@@ -398,7 +401,7 @@ function draw_start()
   {
     special_line(ctx,4, epur_coord_x(0), start_graphics_y, epur_coord_x(fx[i]), start_graphics_y-(i*10)-30, fx[i]); //sizes
   }
-  dot_with_txt(ctx, start_graphics_x+10, start_graphics_y, alphabet[x]);
+  dot_with_txt(ctx, start_graphics_x, start_graphics_y, alphabet[x]);
   for(var i=0;i<x;i++)
   {
 	dot_with_txt(ctx,epur_coord_x(fx[i]),start_graphics_y,alphabet[x-i-1]);
@@ -406,7 +409,9 @@ function draw_start()
   ctx.fillStyle = "black";
   ctx.strokeStyle = "black";
   for(var i=0; i!=x-1; i++)
-  {
+  {  
+	ctx.fillStyle = "black";
+    ctx.strokeStyle = "black";
 	ctx.moveTo(example.width-(start_graphics_x*2),(start_graphics_y*(i+2))-15);
 	ctx.lineTo(example.width-(start_graphics_x*2),(start_graphics_y*(i+2))+15);
 	ctx.lineTo(epur_coord_x((fx[x-i-1]+fx[x-i-2])/2),(start_graphics_y*(i+2))+15);
@@ -417,7 +422,7 @@ function draw_start()
 	dot_with_txt(ctx, epur_coord_x((fx[x-i-1]+fx[x-i-2])/2), start_graphics_y-15, i+1);
 	for(var j=0; j<i+1; j++)
 	{
-	    special_line(ctx,3, epur_coord_x(fx[x-i-1]), start_graphics_y*(i+2), epur_coord_x(fx[i+1]), start_graphics_y, forcesm[i]);
+	    special_line(ctx,3, epur_coord_x(fx[x-j-1]), start_graphics_y*(i+2), 1, 1, forcesm[j]);
 	}
   }
   ctx.fillStyle = "black";
@@ -429,12 +434,28 @@ function draw_start()
   ctx.lineTo(example.width-(start_graphics_x*2),start_graphics_y*(x+1)-15);
   ctx.moveTo(epur_coord_x(fx[0]/2),start_graphics_y*(x+1)+15);
   ctx.lineTo(epur_coord_x(fx[0]/2), start_graphics_y-20);
+  dot_with_txt(ctx, epur_coord_x(fx[0]/2), start_graphics_y-15, x);
+	for(var j=0; j<x; j++)
+	{
+	    special_line(ctx,3, epur_coord_x(fx[x-j-1]), start_graphics_y*(i+2), 1, 1, forcesm[j]);
+	}
 
- 
+  ctx.stroke(); 
+  ctx.closePath();
+  alert("Извиняюсь за лишние линии, я не знаю откуда они, честно");
+
+}
+
+function draw_diam()
+{
+  var example = document.getElementById("example");
+  var ctx = example.getContext('2d');
+  var this_s_g_y =start_graphics_y*(x+2); // start_graphics_y for this function
+
+  special_line(ctx,2, start_graphics_x - 11, this_s_g_y, example.width-(start_graphics_x*2)+11, this_s_g_y, 5); //ось
   ctx.stroke(); 
   ctx.closePath();
 }
-function draw_diam(){}
 function draw_sigma(){}
 function draw_dl(){}
 function draw_delta(){}
