@@ -1,0 +1,569 @@
+<html>
+<head>
+<!--<HTA:APPLICATION ID="oHTA"
+APPLICATIONNAME="WMPTour"
+BORDER="thin"
+BORDERSTYLE="normal"
+maximizeButton="no"
+minimizeButton="no"
+ICON="img/wmptour.ico"
+SINGLEINSTANCE="yes"
+SYSMENU="yes"
+VERSION="1.0"/>-->
+<title>Расчёт балки</title>
+<script src="propertiesofmaterials.js"></script>
+<script>
+var fx =[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]; // я не знал как сделать массив по-нормальному. не знаю до сих пор.
+var forcesm = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0];
+var n_values = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0];
+var d_values = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0];
+var sigma_values = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0];
+var dl_values = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0];
+var delta_values = [0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0];
+var shape = 3; // форма сечения
+var material = 0;
+var lb = 0.0; // длина балки
+var x = 0; // count of forces
+var materials_names_select_text = "";
+var p1_text_results = "";
+var start_graphics_x = 30;
+var start_graphics_y = 70;
+var distance_y_graphics = 70;
+var alphabet="abcdefghijklmnopqrstuvwxyz";
+
+function swap(arr, a, b) { //it need 4 sort
+var temp = arr[a];
+arr[a] = arr[b];
+arr[b] = temp;
+}
+
+const Compare = { // it's too
+LESS_THAN: -1,
+BIGGER_THAN: 1
+};
+
+function defaultCompare(a, b) //and it
+{
+if (a === b) {
+return 0;
+}
+return a < b ? Compare.LESS_THAN : Compare.BIGGER_THAN;
+}
+
+function input_forces() // actually, not only forces...
+{
+document.getElementById("knopkabestnaming").style.display = "none";
+material = parseInt(prompt(materials_names_select_text,0));
+lb = parseFloat(prompt("Длина балки в метрах", "5"));
+x = parseInt(prompt("Количество сил", "1"));
+shape = parseInt(prompt("форма сечения: 1-квадратное, 3-круглое", "3"));
+for (var i = 0; i < x; i++) {
+fx[i] = parseFloat(prompt("Расстояние от заделки до точки приложения силы в метрах(сила номер "+(i+1)+")", "0.1"));
+forcesm[i] = parseInt(prompt("величина силы в килоньютонах", "5"));
+}
+}
+
+function sort_forces(arr, len, compare = defaultCompare) //УЖАС
+{
+for (let i = 0; i < len; i++) {
+for (let j = 0; j < len ; j++) { 
+if (compare(arr[j], arr[j]) === Compare.BIGGER_THAN) {
+swap(arr, j, j + 1);
+swap(forcesm, j, j + 1);
+}
+}
+}
+return arr;
+}
+
+function calc_n() // calc niggas bahahahah
+{
+  p1_text_results = "	1. Определение продольных сил на участках стержня<br>"
+  for(var j=x-1; j!=-1; j--)
+  {
+    n_values[j] = n_values[j+1]+forcesm[j];
+    p1_text_results += "N["+(x-j)+"] ="+ n_values[j]+" кН<br>";
+  }
+}
+
+function calc_diam()
+{
+  p1_text_results += "<br>	2. Подбор сечения бруса  равного сопротивления<br>";
+  for(var i=0; i<x; i++){
+    if(n_values[i]<0)
+	{
+	  if(shape == 1)
+	  {
+	    d_values[i]=Math.sqrt((Math.abs(n_values[i])*1000)/sigma_s[material]);
+	  }
+	  if(shape == 3)
+	  {
+	    d_values[i]=Math.sqrt((4*Math.abs(n_values[i])*1000)/(3.1415*sigma_s[material]));
+	  }
+	}
+    if(n_values[i]>0){
+	  if(shape == 1){
+	    d_values[i]=Math.sqrt(Math.abs(n_values[i])*1000/sigma_r[material]);
+	  }
+	  if(shape == 3){
+	    d_values[i]=Math.sqrt(4*Math.abs(n_values[i])*1000/(3.1415*sigma_r[material]));
+	  }
+	}
+	p1_text_results += "d["+(x-i)+"]="+d_values[i]+" мм<br>";
+  }
+  p1_text_results += "<br>	Посмотрю я на тебя, растачивающего вал точно-ровно такого размера =) Поэтому будем приведить к нормальным размерам. они так и называются - нормальные размеры.<font color='#888888'>(нормальные, не то что эти психи шизофреники ахахахаххахаха)</font><br>";
+  for(var i=0; i<x; i++)
+  {  
+	var min_p_z_r = 99999;
+	var min_p_z_r_id = 0;
+	var max_o_z_r = -99999;
+	var max_o_z_r_id = 0;
+    for(var j=0; (table_of_normal_sizes[j]-d_values[i]) < 0; j++)
+	{
+	  if((table_of_normal_sizes[j]-d_values[i])>max_o_z_r)
+	  {
+	    max_o_z_r = table_of_normal_sizes[j]-d_values[i];
+		max_o_z_r_id = j;
+	  }
+	}
+	for(var j=max_o_z_r_id; (table_of_normal_sizes[j]-d_values[i]) < table_of_normal_sizes.length; j++)
+	{
+	  if(((table_of_normal_sizes[j]-d_values[i])<min_p_z_r)&&((table_of_normal_sizes[j]-d_values[i])>0))
+	  {
+	    min_p_z_r = table_of_normal_sizes[j]-d_values[i];
+		min_p_z_r_id = j;
+	  }
+	}
+	p1_text_results += "Участок "+(x-i)+". По таблице нормальных размеров, видно, что близжайшие к числу " +d_values[i]+ " значения это "+table_of_normal_sizes[min_p_z_r_id]+" и "+table_of_normal_sizes[max_o_z_r_id]+"<br> проверяем прочность:";
+	if(shape == 1)
+	{
+	  let test_result2 = (n_values[i]*1000)/(table_of_normal_sizes[max_o_z_r_id]*table_of_normal_sizes[max_o_z_r_id]);
+	  if(n_values[i]<0)
+	  {
+		if( ((test_result2 - sigma_s[material])/sigma_s[material])*100 < 5)
+		{
+		  p1_text_results += " перенапряжение равно "+  (((test_result2 - sigma_s[material])/sigma_s[material])*100) + " < 5%, а значит и так сойдёт, d=" + table_of_normal_sizes[max_o_z_r_id]+"<br>";
+		  d_values[i] = table_of_normal_sizes[max_o_z_r_id];
+		}
+		else{
+		  p1_text_results += " перенапряжение равно "+  (((test_result2 - sigma_s[material])/sigma_s[material])*100) + " > 5%, а значит d=" + table_of_normal_sizes[min_p_z_r_id]+"<br>";
+		  d_values[i] = table_of_normal_sizes[min_p_z_r_id];
+		}
+	  }
+	  if(n_values[i]>0)
+	  {
+		if( ((test_result2 - sigma_r[material])/sigma_r[material])*100 < 5)
+		{
+		  p1_text_results += " перенапряжение равно "+  (((test_result2 - sigma_r[material])/sigma_r[material])*100) + " < 5%, а значит и так сойдёт, d=" + table_of_normal_sizes[max_o_z_r_id]+"<br>";
+		  d_values[i] = table_of_normal_sizes[max_o_z_r_id];
+		}
+		else{
+		  p1_text_results += " перенапряжение равно "+  (((test_result2 - sigma_r[material])/sigma_r[material])*100) + " > 5%, а значит d=" + table_of_normal_sizes[min_p_z_r_id]+"<br>";
+		  d_values[i] = table_of_normal_sizes[min_p_z_r_id];
+		} 
+	  }
+	}
+	if(shape == 3)
+	{
+	  let test_result2 = (4000*Math.abs(n_values[i]))/(table_of_normal_sizes[max_o_z_r_id]*table_of_normal_sizes[max_o_z_r_id]*3.14);
+	  //alert(test_result2 + "= (4000*"+n_values[i]+")/("+(table_of_normal_sizes[max_o_z_r_id]*table_of_normal_sizes[max_o_z_r_id])+"*3.14);");
+	  if(n_values[i]<0)
+	  {
+		if( ((test_result2 - sigma_s[material])/sigma_s[material])*100 < 5)
+		{
+		  p1_text_results += " перенапряжение равно "+  (((test_result2 - sigma_s[material])/sigma_s[material])*100) + " < 5%, а значит и так сойдёт, d=" + table_of_normal_sizes[max_o_z_r_id]+"<br>";
+		  d_values[i] = table_of_normal_sizes[max_o_z_r_id];
+		}
+		else{
+		  p1_text_results += " перенапряжение равно "+  (((test_result2 - sigma_s[material])/sigma_s[material])*100) + " > 5%, а значит d=" + table_of_normal_sizes[min_p_z_r_id]+"<br>";
+		  d_values[i] = table_of_normal_sizes[min_p_z_r_id];
+		}
+	  }
+	  if(n_values[i]>0)
+	  {
+		if( ((test_result2 - sigma_r[material])/sigma_r[material])*100 < 5)
+		{
+		  p1_text_results += " перенапряжение равно "+  (((test_result2 - sigma_r[material])/sigma_r[material])*100) + " < 5%, а значит и так сойдёт, d=" + table_of_normal_sizes[max_o_z_r_id]+"<br>";
+		  d_values[i] = table_of_normal_sizes[max_o_z_r_id];
+		}
+		else{
+		  p1_text_results += " перенапряжение равно "+  (((test_result2 - sigma_r[material])/sigma_r[material])*100) + " > 5%, а значит d=" + table_of_normal_sizes[min_p_z_r_id]+"<br>";
+		  d_values[i] = table_of_normal_sizes[min_p_z_r_id];
+		} 
+	  }
+	}	
+  }
+}
+
+
+function calc_sigma()
+{
+  p1_text_results += "<br>3. Определение напряжений на участках стержней<br>";
+  if(shape==1)
+  {
+    for(var i = 0; i<x; i++)
+    {
+      sigma_values[i] = (1000*Math.abs(n_values[i])/(d_values[i]*d_values[i]));
+	  p1_text_results += "σ["+(x-i)+"]="+sigma_values[i]+" МПа<br>";
+    }
+  }
+  if(shape==3)
+  {
+    for(var i = 0; i<x; i++)
+    {
+      sigma_values[i] = ((4000*Math.abs(n_values[i]))/(3.1415*d_values[i]*d_values[i]));
+	  p1_text_results += "σ["+(x-i)+"]="+sigma_values[i]+" МПа<br>";
+    }
+  }
+}
+function calc_dl()
+{
+  p1_text_results += "<br> 4. Определение абсолютных деформаций участков стержня.<br>";
+  var temp_sum =0;
+  if(shape==1)
+  {
+    d_values[0] = (n_values[0]*1000*fx[0]*1000)/(E[material]*d_values[0]*d_values[0]);
+	p1_text_results +="Δl["+0+"]="+dl_values[0]+"<br>";
+    for(var i=1; i<x; i++)
+	{
+	  dl_values[i] = (n_values[i]*1000*(fx[i]-fx[i-1])*1000)/(E[material]*d_values[i]*d_values[i]);
+	  p1_text_results +="Δl["+i+"]="+dl_values[i]+"<br>";
+	}
+  }
+  if(shape==3)
+  { 
+    dl_values[0] = (4*n_values[0]*1000*(fx[0])*1000)/(3.1415*E[material]*d_values[0]*d_values[0]);
+    p1_text_results +="Δl["+0+"]="+dl_values[0]+"<br>";
+	for(var i=1; i<x; i++)
+	{
+	  dl_values[i] = (4*n_values[i]*1000*(fx[i]-fx[i-1])*1000)/(3.1415*E[material]*d_values[i]*d_values[i]);
+	  p1_text_results +="Δl["+i+"]="+dl_values[i]+"<br>";
+	}
+  }
+  for(var i=0;i<x;i++)
+  {
+    temp_sum+=dl_values[i];
+  }
+  p1_text_results+= "Δl полное="+temp_sum+"<br>";
+}
+function calc_delta()
+{
+  var temp_sum =0;
+  p1_text_results += "<br> 5. Определение перемещений сечений стержня<br>δ["+alphabet[x]+"]=0<br>";
+  for(var i=0;i<x;i++)
+  {
+    temp_sum+=dl_values[i];
+	delta_values[i] = temp_sum;
+	p1_text_results += "δ["+alphabet[x-i-1]+"]="+temp_sum+"<br>";
+  }
+  p1_text_results += "всё =)";
+}
+function special_line(c,type,xx,yy,xx1,yy1, param)
+{
+  if(type==1)  //линия заделки
+  {
+    for(var i=yy; i<yy1; i+=param)
+    {
+      c.moveTo(xx, i);
+      c.lineTo(xx-param, i+param);
+    }
+  }
+  if(type==2)  //линия штрихпунктирная
+  {  
+    var nn=1;
+	c.moveTo(xx,yy);
+    for(var i=xx; i<xx1; i++)
+    {
+	  if(nn==1){
+	  i+=12
+	  }
+	  else if(nn==2){
+	  i+=1
+	  }
+	  else if(nn==3){
+	  i+=1
+	  }
+	  else if(nn=4)
+	  {
+	  i+=1
+	  };
+      if(nn==1)
+	  {
+	    c.lineTo(i,yy); 
+		nn++;
+	  }
+	  else if(nn==2)
+	  {
+	    c.moveTo(i,yy);
+		nn++;
+	  }
+	  else if(nn==3)
+	  {
+	    c.lineTo(i,yy);
+		nn++;
+	  }
+	  else if(nn==4)
+	  {
+	    c.moveTo(i,yy);
+		nn=1;
+	  }
+    }
+  }
+  if(type==3)
+  {
+	c.fillStyle = "red";
+    c.strokeStyle = "purple";
+	c.arc(xx, yy, 3, 0, Math.PI*2, true); 
+	c.moveTo(xx,yy);
+	c.moveTo(xx,yy);
+	if(param<0)
+	{
+	  c.lineTo(xx-20,yy);
+	  c.lineTo(xx-8,yy+3);
+	  c.lineTo(xx-8,yy-3);
+	  c.lineTo(xx-20,yy);
+	}
+	else
+	{
+	  c.lineTo(xx+20,yy);
+	  c.lineTo(xx+8,yy+3);
+	  c.lineTo(xx+8,yy-3);
+	  c.lineTo(xx+20,yy);
+	}
+	c.fillStyle = "black";
+    c.strokeStyle = "black";
+	c.moveTo(xx,yy);
+  }
+  if(type==4)
+  {
+    c.fillStyle = "black";
+    c.strokeStyle = "black";
+	c.moveTo(xx,yy);
+	c.lineTo(xx,yy1);
+	c.lineTo(xx+8,yy1-4);
+	c.lineTo(xx+8,yy1+4);
+	c.lineTo(xx,yy1);
+	c.lineTo(xx,yy1);
+	c.moveTo(xx1,yy);
+	c.lineTo(xx1,yy1);
+	c.lineTo(xx1-8,yy1-4);
+	c.lineTo(xx1-8,yy1+4);
+	c.lineTo(xx1,yy1);
+	c.lineTo(xx,yy1);
+	c.moveTo(xx,yy1);
+	c.textAlign = "center";
+    c.textBaseline = "bottom";
+	c.font = "italic 8pt Arial";
+    c.fillText(param, (xx+xx1)/2, yy1);
+  }
+}
+function epur_coord_x(param)
+{
+  temp_value = start_graphics_x+(((example.width - start_graphics_x*3)/lb)*param);
+  return temp_value
+}
+function dot_with_txt(c,xx,yy,param) // haha text without dot
+{
+  c.fillStyle = "black";
+  c.strokeStyle = "black";
+  c.textAlign = "left";
+  c.textBaseline = "bottom";
+  c.font = "italic 8pt Arial";
+  c.arc(xx, yy, 2, 0, Math.PI*2, true); 
+  c.fillText(param, xx, yy);
+};
+function draw_start()
+{
+  var example = document.getElementById("example");
+  var ctx = example.getContext('2d');
+  
+  ctx.fillStyle = "white";
+  ctx.strokeStyle = "black";
+  ctx.fillRect(0, 0, example.width, example.height);
+  ctx.beginPath();
+  ctx.fill(); 
+  ctx.moveTo(start_graphics_x, start_graphics_y-25);
+  ctx.lineTo(start_graphics_x, start_graphics_y+25);
+  special_line(ctx, 1, start_graphics_x, start_graphics_y - 27, start_graphics_x, start_graphics_y + 27, 5); // заделка
+  ctx.moveTo(start_graphics_x,start_graphics_y-15);
+  ctx.lineTo(example.width-(start_graphics_x*2),start_graphics_y-15);
+  ctx.lineTo(example.width-(start_graphics_x*2), start_graphics_y+15);
+  ctx.lineTo(start_graphics_x, start_graphics_y+15);
+  special_line(ctx,2, start_graphics_x - 11, start_graphics_y, example.width-(start_graphics_x*2)+11, start_graphics_y, 5); //ось
+  ctx.stroke();
+  //ctx.closePath();
+  ctx.beginPath();
+  for( var i=0; i<x; i++)
+  {
+    special_line(ctx,3, epur_coord_x(fx[i]), start_graphics_y, epur_coord_x(fx[i+1]), start_graphics_y, forcesm[i]); //стрелочки с силами
+  }
+  for( var i=0; i<x; i++)
+  {
+    special_line(ctx,4, epur_coord_x(0), start_graphics_y, epur_coord_x(fx[i]), start_graphics_y-(i*10)-30, fx[i]); //sizes
+  }
+  dot_with_txt(ctx, start_graphics_x, start_graphics_y, alphabet[x]);
+  for(var i=0;i<x;i++)
+  {
+	dot_with_txt(ctx,epur_coord_x(fx[i]),start_graphics_y,alphabet[x-i-1]);
+  }
+  ctx.fillStyle = "black";
+  ctx.strokeStyle = "black";
+  for(var i=0; i!=x-1; i++)
+  {  
+	ctx.fillStyle = "black";
+    ctx.strokeStyle = "black";
+	ctx.moveTo(example.width-(start_graphics_x*2),(start_graphics_y*(i+2))-15);
+	ctx.lineTo(example.width-(start_graphics_x*2),(start_graphics_y*(i+2))+15);
+	ctx.lineTo(epur_coord_x((fx[x-i-1]+fx[x-i-2])/2),(start_graphics_y*(i+2))+15);
+	ctx.moveTo(epur_coord_x((fx[x-i-1]+fx[x-i-2])/2),(start_graphics_y*(i+2))-15);
+	ctx.lineTo(example.width-(start_graphics_x*2),(start_graphics_y*(i+2))-15);
+	ctx.moveTo(epur_coord_x((fx[x-i-1]+fx[x-i-2])/2),(start_graphics_y*(i+2))+15);
+	ctx.lineTo(epur_coord_x((fx[x-i-1]+fx[x-i-2])/2), start_graphics_y-20);
+	dot_with_txt(ctx, epur_coord_x((fx[x-i-1]+fx[x-i-2])/2), start_graphics_y-15, i+1);
+	for(var j=0; j<i+1; j++)
+	{
+	    special_line(ctx,3, epur_coord_x(fx[x-j-1]), start_graphics_y*(i+2), 1, 1, forcesm[x-j-1]);
+	}
+  }
+  ctx.fillStyle = "black";
+  ctx.strokeStyle = "black";
+  ctx.moveTo(example.width-(start_graphics_x*2),start_graphics_y*(x+1)-15);
+  ctx.lineTo(example.width-(start_graphics_x*2),start_graphics_y*(x+1)+15);
+  ctx.lineTo(epur_coord_x(fx[0]/2),start_graphics_y*(x+1)+15);
+  ctx.moveTo(epur_coord_x(fx[0]/2),start_graphics_y*(x+1)-15);
+  ctx.lineTo(example.width-(start_graphics_x*2),start_graphics_y*(x+1)-15);
+  ctx.moveTo(epur_coord_x(fx[0]/2),start_graphics_y*(x+1)+15);
+  ctx.lineTo(epur_coord_x(fx[0]/2), start_graphics_y-20);
+  dot_with_txt(ctx, epur_coord_x(fx[0]/2), start_graphics_y-15, x);
+	for(var j=0; j<x; j++)
+	{
+	    special_line(ctx,3, epur_coord_x(fx[x-j-1]), start_graphics_y*(i+2), 1, 1, forcesm[j]);
+	}
+
+  ctx.stroke(); 
+  ctx.closePath();
+  alert("Извиняюсь за лишние линии, я не знаю откуда они, честно");
+
+}
+function convert_y_for_plot_diagram(va,maxim)
+{
+  var border_value = 50;
+  return (va/maxim)*border_value;
+}
+function draw_n() //draw niggas
+{
+  var example = document.getElementById("example");
+  var ctx = example.getContext('2d');
+  var this_sgy =start_graphics_y*(x+2); // start_graphics_y for this function
+  var mx = 0;
+  for(var i = 0; i<x; i++)
+  {
+	  if(Math.abs(n_values[i])>mx)
+	    mx=Math.abs(n_values[i]);
+  }
+  alert("mx="+mx);
+ // ctx.strokeRect(start_graphics_x, this_sgy, epur_coord_x(fx[x-1]),convert_y_for_plot_diagram(n_values[x-1],mx));
+  for(var i = 1; i<x;i++)
+  {
+    //ctx.strokeRect(epur_coord_x(fx[x-i-1]), this_sgy, epur_coord_x(fx[x-i-1]-fx[x-i]),convert_y_for_plot_diagram(n_values[x-i-1],mx));
+    ctx.strokeRect(epur_coord_x(fx[i]), this_sgy, epur_coord_x(fx[i]-fx[i-1]),convert_y_for_plot_diagram(n_values[i],mx));
+  }
+  //special_line(ctx,2, start_graphics_x - 11, this_sgy, example.width-(start_graphics_x*2)+11, this_sgy, 5); //ось
+  //ctx.stroke(); 
+  //ctx.closePath();
+  
+  c.fillStyle = "black";
+  c.strokeStyle = "black";
+  c.textAlign = "center";
+  c.textBaseline = "center";
+  c.font = "italic 8pt Arial";
+  c.fillText("я пытался", start_graphics_x, example.height/2)
+}
+function draw_diam()
+{
+  var example = document.getElementById("example");
+  var ctx = example.getContext('2d');
+  var this_s_g_y =start_graphics_y*(x+3); // start_graphics_y for this function
+  var mx = 0;
+
+  for(var i = 0; i<x; i++)
+  {
+	  if(d_values[i]>mx)mx=d_values[i];
+  }
+  
+  special_line(ctx,2, start_graphics_x - 11, this_s_g_y, example.width-(start_graphics_x*2)+11, this_s_g_y, 5); //ось
+  ctx.stroke(); 
+  ctx.closePath();
+}
+function draw_sigma(){}
+function draw_dl(){}
+function draw_delta(){}
+
+function init_materials_names()
+{
+  materials_names_select_text = "материал балки, отправить цифру:";
+  for(var i = 0; i < names_materials.length; i++)
+  {
+    materials_names_select_text = materials_names_select_text + "\n" + i + " - " +names_materials[i];
+  }
+}
+
+function alerted() //it all begins here
+{
+  init_materials_names();
+  input_forces(); // input forces
+  fx=sort_forces(fx, x); //sorting forces 4 more easier calculating "N"
+  calc_n(); //
+  calc_diam(); //
+  calc_sigma();
+  calc_dl();
+  calc_delta();
+  document.getElementById("p1").innerHTML=p1_text_results;
+  draw_start();
+  draw_n();
+  draw_diam();
+}
+
+</script>
+</head>
+
+<body>
+<h1>Расчёт на прочность и жёсткость при растяжении и сжатии</h1>
+<h3> ВНИМАНИЕ! для того, чтобы пересчитать результаты, необходимо перезагрузить страницу</h3>
+<table border="2" style="border-collapse:collapse;">
+<tr>
+<th width=300>Эпюры</th>
+<th width=500>Данные</th>
+</tr> <!-- заголовки чисто чтобы начать работать -->
+
+<tr> <!-- самое интересное -->
+<td>
+<center>
+<canvas height='500' width='300' id='example'> пожалуйста, верни всё как было. а то эпюр не будет. тебе ведь нужны эпюры?</canvas>
+<!-- вот реально -->
+</center>
+<script async>
+var example = document.getElementById("example");
+var ctx = example.getContext('2d');
+ctx.shadowOffsetX = 5;
+ctx.shadowOffsetY = 5;
+ctx.shadowBlur = 5; // это почему-то не работает
+ctx.fillStyle = "#00F";
+ctx.strokeStyle = "#F00";
+ctx.font = 'bold 30px sans-serif';
+ctx.strokeText("Тут будут эпюры", 20, 50);
+ctx.font = "italic 10pt Arial";
+ctx.fillText("но сначала необходимо ввести данные", 20, 100);
+// красота, не правда ли?
+</script>
+</td>
+<td>
+<!--<h3 id="header1">header</h3>
+<input type="text" id="kye" value="0" />-->
+<button type="submit" onclick="alerted();" id="knopkabestnaming">начать рассчёты</button>
+<p id="p1"></p></td>
+</tr>
+</table>
+<p>Пользуйся на здоровье, но лучше всё-таки сопромат учи, хотя, если ты это читаешь, от пересдачи тебя это не спасёт =)</p>
+</body>
+</html>
