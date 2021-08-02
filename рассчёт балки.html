@@ -422,7 +422,7 @@ function draw_start()
 	dot_with_txt(ctx, epur_coord_x((fx[x-i-1]+fx[x-i-2])/2), start_graphics_y-15, i+1);
 	for(var j=0; j<i+1; j++)
 	{
-	    special_line(ctx,3, epur_coord_x(fx[x-j-1]), start_graphics_y*(i+2), 1, 1, forcesm[j]);
+	    special_line(ctx,3, epur_coord_x(fx[x-j-1]), start_graphics_y*(i+2), 1, 1, forcesm[x-j-1]);
 	}
   }
   ctx.fillStyle = "black";
@@ -445,13 +445,45 @@ function draw_start()
   alert("Извиняюсь за лишние линии, я не знаю откуда они, честно");
 
 }
-
+function convert_y_for_plot_diagram(va,maxim)
+{
+  var border_value = 50;
+  return (va/maxim)*border_value;
+}
+function draw_n() //draw niggas
+{
+  var example = document.getElementById("example");
+  var ctx = example.getContext('2d');
+  var this_sgy =start_graphics_y*(x+2); // start_graphics_y for this function
+  var mx = 0;
+  for(var i = 0; i<x; i++)
+  {
+	  if(Math.abs(n_values[i])>mx)
+	    mx=Math.abs(n_values[i]);
+  }
+  alert("mx="+mx);
+ // ctx.strokeRect(start_graphics_x, this_sgy, epur_coord_x(fx[x-1]),convert_y_for_plot_diagram(n_values[x-1],mx));
+  for(var i = 1; i<x;i++)
+  {
+    //ctx.strokeRect(epur_coord_x(fx[x-i-1]), this_sgy, epur_coord_x(fx[x-i-1]-fx[x-i]),convert_y_for_plot_diagram(n_values[x-i-1],mx));
+    ctx.strokeRect(epur_coord_x(fx[i]), this_sgy, epur_coord_x(fx[i]-fx[i-1]),convert_y_for_plot_diagram(n_values[i],mx));
+  }
+  //special_line(ctx,2, start_graphics_x - 11, this_sgy, example.width-(start_graphics_x*2)+11, this_sgy, 5); //ось
+  ctx.stroke(); 
+  ctx.closePath();
+}
 function draw_diam()
 {
   var example = document.getElementById("example");
   var ctx = example.getContext('2d');
-  var this_s_g_y =start_graphics_y*(x+2); // start_graphics_y for this function
+  var this_s_g_y =start_graphics_y*(x+3); // start_graphics_y for this function
+  var mx = 0;
 
+  for(var i = 0; i<x; i++)
+  {
+	  if(d_values[i]>mx)mx=d_values[i];
+  }
+  
   special_line(ctx,2, start_graphics_x - 11, this_s_g_y, example.width-(start_graphics_x*2)+11, this_s_g_y, 5); //ось
   ctx.stroke(); 
   ctx.closePath();
@@ -481,6 +513,8 @@ function alerted() //it all begins here
   calc_delta();
   document.getElementById("p1").innerHTML=p1_text_results;
   draw_start();
+  draw_n();
+  draw_diam();
 }
 
 </script>
@@ -498,7 +532,7 @@ function alerted() //it all begins here
 <tr> <!-- самое интересное -->
 <td>
 <center>
-<canvas height='500' width='300' id='example'> пожалуйста, верни всё как было. а то эпюр не будет. тебе ведь нужны эпюры?</canvas>
+<canvas height='1000' width='300' id='example'> пожалуйста, верни всё как было. а то эпюр не будет. тебе ведь нужны эпюры?</canvas>
 <!-- вот реально -->
 </center>
 <script async>
